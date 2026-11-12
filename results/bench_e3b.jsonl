@@ -1,0 +1,5 @@
+{"experiment": "E3b", "workers": 8, "blocks": 4, "seconds": 0.0624, "iters": 100}
+{"experiment": "E3b", "workers": 8, "blocks": 8, "seconds": 0.0638, "iters": 100}
+{"experiment": "E3b", "workers": 8, "blocks": 16, "seconds": 0.0923, "iters": 100}
+{"experiment": "E3b", "workers": 8, "blocks": 32, "seconds": 0.1494, "iters": 100}
+{"experiment": "E3b", "workers": 8, "blocks": 64, "seconds": 0.2826, "iters": 100}

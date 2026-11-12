@@ -1,0 +1,33 @@
+{
+  "workers": 20,
+  "chunk_mb": 8,
+  "total_seconds": 39.249,
+  "files": {
+    "title.akas": {
+      "seconds": 4.87,
+      "rows": 25997,
+      "rows_out": 25997
+    },
+    "title.basics": {
+      "seconds": 9.215,
+      "rows": 21033,
+      "rows_out": 21033
+    },
+    "title.principals": {
+      "seconds": 14.78,
+      "rows": 360502,
+      "rows_out": 360502
+    },
+    "name.basics": {
+      "seconds": 10.345,
+      "rows": 127189,
+      "rows_out": 127189
+    }
+  },
+  "counts": {
+    "hk_titles": 25997,
+    "titles_kept": 21033,
+    "principal_rows": 360502,
+    "distinct_people": 127218
+  }
+}

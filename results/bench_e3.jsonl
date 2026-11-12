@@ -1,0 +1,5 @@
+{"experiment": "E3", "workers": 1, "seconds": 0.1059, "iters": 100}
+{"experiment": "E3", "workers": 2, "seconds": 0.0738, "iters": 100, "max_abs_diff": 0.0}
+{"experiment": "E3", "workers": 4, "seconds": 0.0576, "iters": 100, "max_abs_diff": 0.0}
+{"experiment": "E3", "workers": 8, "seconds": 0.0636, "iters": 100, "max_abs_diff": 0.0}
+{"experiment": "E3", "workers": 16, "seconds": 0.1104, "iters": 100, "max_abs_diff": 0.0}

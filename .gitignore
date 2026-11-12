@@ -1,0 +1,29 @@
+# Raw dumps and decompressed intermediates: 1.78 GB compressed, 9.2 GB unpacked.
+# They are not redistributed here because (a) GitHub rejects files over 100 MB and
+# (b) the IMDb non-commercial licence does not permit redistributing the data.
+# Run `python src/download_data.py` to fetch them; see README.
+data/raw/
+data/interim/
+
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# LaTeX build products
+report/latex/*.aux
+report/latex/*.log
+report/latex/*.out
+report/latex/*.toc
+report/latex/*.synctex.gz
+
+# Office lock files
+~$*
+*.tmp
+
+# Stale export: Report.pdf was an older build kept open by a viewer and could not be
+# overwritten. The current PDF is Report_final.pdf.
+report/Report.pdf
+
+.DS_Store
+Thumbs.db

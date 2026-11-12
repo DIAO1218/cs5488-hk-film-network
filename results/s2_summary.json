@@ -1,0 +1,20 @@
+{
+  "top3": {
+    "top_k": 3,
+    "titles_with_cast": 19022,
+    "titles_with_edge": 18551,
+    "nodes": 21912,
+    "edges": 48122,
+    "total_weight": 54677,
+    "mean_cast_size": 2.92
+  },
+  "top8": {
+    "top_k": 8,
+    "titles_with_cast": 19022,
+    "titles_with_edge": 18551,
+    "nodes": 51878,
+    "edges": 388168,
+    "total_weight": 451636,
+    "mean_cast_size": 7.17
+  }
+}

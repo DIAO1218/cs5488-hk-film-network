@@ -1,0 +1,3 @@
+{"experiment": "E3c", "replica": 1, "nodes": 51878, "edges": 388168, "serial": 0.0346, "parallel": 0.0273, "speedup": 1.265}
+{"experiment": "E3c", "replica": 4, "nodes": 207512, "edges": 1552672, "serial": 0.1661, "parallel": 0.0904, "speedup": 1.838}
+{"experiment": "E3c", "replica": 16, "nodes": 830048, "edges": 6210688, "serial": 0.6583, "parallel": 0.3077, "speedup": 2.139}

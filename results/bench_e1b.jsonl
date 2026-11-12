@@ -1,0 +1,8 @@
+{"experiment": "E1b", "workers": 16, "chunk_mb": 1, "seconds": 8.843, "rows": 360502}
+{"experiment": "E1b", "workers": 16, "chunk_mb": 2, "seconds": 8.761, "rows": 360502}
+{"experiment": "E1b", "workers": 16, "chunk_mb": 4, "seconds": 8.748, "rows": 360502}
+{"experiment": "E1b", "workers": 16, "chunk_mb": 8, "seconds": 8.901, "rows": 360502}
+{"experiment": "E1b", "workers": 16, "chunk_mb": 16, "seconds": 9.108, "rows": 360502}
+{"experiment": "E1b", "workers": 16, "chunk_mb": 32, "seconds": 9.228, "rows": 360502}
+{"experiment": "E1b", "workers": 16, "chunk_mb": 64, "seconds": 9.759, "rows": 360502}
+{"experiment": "E1b", "workers": 16, "chunk_mb": 128, "seconds": 10.7, "rows": 360502}

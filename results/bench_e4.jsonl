@@ -1,0 +1,5 @@
+{"experiment": "E4", "workers": 1, "seconds": 1.963, "candidate_gen_seconds": 0.073, "counting_seconds": 1.89, "level_sizes": [28, 204, 682, 1349], "peak_mb": 211.9}
+{"experiment": "E4", "workers": 2, "seconds": 0.958, "candidate_gen_seconds": 0.08, "counting_seconds": 0.878, "level_sizes": [28, 204, 682, 1349], "peak_mb": 326.0}
+{"experiment": "E4", "workers": 4, "seconds": 0.591, "candidate_gen_seconds": 0.086, "counting_seconds": 0.505, "level_sizes": [28, 204, 682, 1349], "peak_mb": 439.8}
+{"experiment": "E4", "workers": 8, "seconds": 0.452, "candidate_gen_seconds": 0.072, "counting_seconds": 0.381, "level_sizes": [28, 204, 682, 1349], "peak_mb": 666.7}
+{"experiment": "E4", "workers": 16, "seconds": 0.435, "candidate_gen_seconds": 0.081, "counting_seconds": 0.354, "level_sizes": [28, 204, 682, 1349], "peak_mb": 1118.2}
