@@ -13,7 +13,7 @@ The first version of the scan tier created a fresh process pool for each of the 
 
 \subsection{Bottlenecks}
 
-Three bottlenecks were predicted in the proposal and all three were confirmed. The serial gunzip (33.8 s) caps the end-to-end benefit of every later stage; the parent-side merge caps the scan tier; and the inter-iteration barrier caps PageRank. A fourth was not predicted: process-based parallelism multiplies memory, which is the binding constraint on the hardware this project targets.
+Three bottlenecks were predicted in the proposal and all three were confirmed. The serial gunzip (33.8 s) caps the end-to-end benefit of every later stage; the parent-side merge caps the scan tier; and the inter-iteration barrier caps PageRank. A fourth was not predicted: process-based parallelism multiplies memory, which is the binding constraint on the hardware this project targets. A fifth is a property of the machine rather than of the algorithm: the 16-worker configuration exceeds the 14 physical cores, and eight of those cores are efficiency cores with roughly half the throughput of the performance cores. Work split evenly by count is therefore not split evenly by time, and the slowest worker sets the finish. The 43\% efficiency at 16 workers consequently mixes two effects \textemdash{} the serial merge and heterogeneous core placement \textemdash{} and this experiment does not attempt to separate them.
 
 \subsection{Threats to validity}
 

@@ -147,7 +147,7 @@ python src/make_slides.py
 
 ## 环境
 
-Windows 11 · 20 逻辑核 · 32 GB 内存（2 × 16 GB DDR4-4800）· Python 3.13。
+Windows 11 · Intel Core i7-12700H（14 物理核：6 性能核 + 8 能效核，20 线程）· 32 GB 内存（2 × 16 GB DDR4-4800）· Python 3.13。
 依赖见 `requirements.txt`：numpy、scipy、matplotlib、networkx、scikit-learn、psutil、requests、
 python-docx、python-pptx。
 

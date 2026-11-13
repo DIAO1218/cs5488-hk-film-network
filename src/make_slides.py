@@ -121,7 +121,7 @@ def build():
     textbox(s, 0.9, 4.55, 11.2, 1.0,
             "CS5488 Data-Intensive Computing   ·   Group project   ·   November 2026", size=14, color=MUTED)
     textbox(s, 0.9, 6.35, 11.2, 0.4,
-            f"170 M rows scanned   ·   {a['graph']['edges']:,} co-star edges   ·   three parallel tiers on 20 cores",
+            f"170 M rows scanned   ·   {a['graph']['edges']:,} co-star edges   ·   three parallel tiers on 20 threads",
             size=13, color=ACCENT)
     note(s, "SPEAKER 1 (60 s). Open with the question, not the method. 'Film historians say Hong Kong "
             "cinema was built on a small set of recurring collaborators. We asked whether an algorithm "
