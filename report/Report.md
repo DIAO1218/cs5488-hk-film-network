@@ -112,7 +112,7 @@ Chunk size is a tuned parameter, not a constant. Small chunks improve load balan
 
 ### 3.4 Evaluation protocol
 
-Every experiment runs the serial reference and the parallel version over identical input, so that S(p) = T(1)/T(p) compares identical work. Workers p ∈ {1, 2, 4, 8, 16}; each configuration is run and the median reported. Peak resident memory is sampled at 10 Hz over the process tree, so the memory cost of parallelism is reported alongside the time benefit. All timings are on one workstation: 20 logical cores, 34 GB RAM, Windows 11, Python 3.13.
+Every experiment runs the serial reference and the parallel version over identical input, so that S(p) = T(1)/T(p) compares identical work. Workers p ∈ {1, 2, 4, 8, 16}; each configuration is run and the median reported. Peak resident memory is sampled at 10 Hz over the process tree, so the memory cost of parallelism is reported alongside the time benefit. All timings are on one workstation: 20 logical cores, 32 GB RAM (2 x 16 GB DDR4-4800), Windows 11, Python 3.13.
 
 ---
 
@@ -292,7 +292,7 @@ The answer is both, and the two effects separate cleanly. At the smallest graph 
 *Figure 13. Peak resident memory against worker count. Process-based parallelism duplicates interpreter and data structures per worker; beyond 8 workers the memory cost grows faster than the time saving on this machine.*
 
 
-**The memory cost of parallelism.** Figure 13 is the trade-off typically omitted. Every additional process duplicates the interpreter, the parsed shared structures and the per-worker buffers: 252 MB at one worker against 1815 MB at sixteen. On a workstation with 34 GB this is affordable; on the 8 GB laptops most students actually have, the same configuration would swap, and the wall-clock result would invert. Parallelism is not free, and the free resource is time only if memory is abundant.
+**The memory cost of parallelism.** Figure 13 is the trade-off typically omitted. Every additional process duplicates the interpreter, the parsed shared structures and the per-worker buffers: 252 MB at one worker against 1815 MB at sixteen. On a workstation with 32 GB this is affordable; on the 8 GB laptops most students actually have, the same configuration would swap, and the wall-clock result would invert. Parallelism is not free, and the free resource is time only if memory is abundant.
 
 ---
 

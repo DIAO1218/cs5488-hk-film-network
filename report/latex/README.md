@@ -2,11 +2,14 @@
 
 这份是 `report/Report.docx` 的 LaTeX 版本，**按章节拆成了独立文件**，四个人可以各改各的，不会互相覆盖。
 
+> 本文件由 `report/md2tex.py` 自动生成。要改说明文字请改脚本，不要直接改这里——
+> 重新生成 LaTeX 工程时会覆盖。
+
 ## 目录结构
 
 ```
 latex/
-├── main.tex                 主文件：导言区、封面、目录、\input 各章（一般不用动）
+├── main.tex                 主文件：导言区、封面、目录、\\input 各章（一般不用动）
 ├── sections/
 │   ├── 01_abstract.tex      摘要
 │   ├── 02_introduction.tex  引言（背景/目标/数据来源）
@@ -17,7 +20,7 @@ latex/
 │   ├── 07_individual_contribution_statement.tex  个人贡献
 │   ├── 08_references.tex    参考文献
 │   └── 09_appendix_a_reproducibility.tex    附录
-└── figures/                 13 张图（与 Word 版完全相同，改图请重跑 src/figures.py）
+└── figures/                 13 张图（与 Word 版相同，改图请重跑 src/figures.py）
 ```
 
 ## 建议分工
@@ -48,7 +51,7 @@ cd report/latex
 pdflatex main.tex && pdflatex main.tex && pdflatex main.tex
 ```
 
-要跑三遍：第一遍生成 `.aux`，第二遍填目录和交叉引用，第三遍才稳定。也可以装 `latexmk` 后一条命令 `latexmk -pdf main.tex`。
+要跑三遍：第一遍生成 `.aux`，第二遍填目录和交叉引用，第三遍才稳定。装 `latexmk` 后可用一条命令：`latexmk -pdf main.tex`。
 
 **3. 只想读**
 
@@ -56,17 +59,17 @@ pdflatex main.tex && pdflatex main.tex && pdflatex main.tex
 
 ## 改内容时的三条规矩
 
-1. **不要手工编号。** 章节、图、表、公式的编号都是 LaTeX 自动生成的。写 `\section{Methodology}`，不要写 `\section{3. Methodology}`。
-2. **数字从结果来。** 正文里的数字是 `src/build_report.py` 从 `results/*.jsonl` 生成的。如果重跑了实验，改 `report/Report.md` 对应文字后重跑 `python src/md2tex.py`，而不是在 `.tex` 里手改——否则 Word 版和 LaTeX 版会不一致。
-3. **图不要单独改。** `figures/` 里的 PNG 由 `src/figures.py` 生成。要改样式就改脚本重跑，别在目录里直接替换图片，否则下次重跑会被覆盖。
+1. **不要手工编号。** 章节、图、表、公式的编号都是 LaTeX 自动生成的。写 `\\section{Methodology}`，不要写 `\\section{3. Methodology}`。
+2. **数字从结果来。** 正文里的数字由 `src/build_report.py` 从 `results/*.jsonl` 生成。重跑实验后应改 `report/Report.md` 的上游生成器再重跑 `python report/md2tex.py`，而不是直接在 `.tex` 里手改——否则 Word 版、中文版和 LaTeX 版会互相不一致。
+3. **图不要单独换。** `figures/` 里的 PNG 由 `src/figures.py` 生成；在目录里直接替换图片，下次重跑会被覆盖。
 
 ## 已知的取舍
 
-- **交叉引用是纯文本。** 正文里写的是 "Figure 6"、"Section 4.6"，不是 `\ref{}`。因为图序和章节序与 Word 版严格一致，这样两边读起来对得上；代价是如果你增删了图，正文里的编号要自己改。想改用 `\ref`，给图加 `\label{fig:xx}` 即可。
-- **表格用 `booktabs` + `tabularx`。** 竖线全部去掉，横向只有三条粗细不同的线，这是学术排版惯例。列宽自动分配，不要在单元格里加 `\hline`。
-- **参考文献是手工 `enumerate`。** 没有用 BibTeX。如果老师要求特定格式（如 IEEE），换成 `\bibliography` 更快。
-- **字体是 Latin Modern**（`lmodern`）。在 Overleaf 和本机一致，不需要装额外字体。
+- **交叉引用是纯文本。** 正文写的是 "Figure 6"、"Section 4.6"，不是 `\\ref{}`。因为图序与章节序与 Word 版严格一致，两边读起来能对上；代价是增删图后要自己改正文编号。想换成 `\\ref`，给图加 `\\label{fig:xx}` 即可。
+- **表格用 `booktabs` + `tabularx`。** 去掉竖线、只留三条横线，是学术排版惯例；列宽自动分配，不要在单元格里加 `\\hline`。
+- **参考文献是手工 `enumerate`。** 没有用 BibTeX。若老师要求特定格式（如 IEEE），换成 `\\bibliography` 更快。
+- **字体是 Latin Modern**（`lmodern`），Overleaf 与本地表现一致，无需额外字体。
 
 ## 编译验证
 
-本机 MiKTeX 25.12 + pdfLaTeX 编译通过：**0 error，0 overfull box，21 页**。
+本机 MiKTeX 25.12 + pdfLaTeX：**0 error，0 overfull box，21 页**。
