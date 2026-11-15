@@ -68,38 +68,37 @@ def load_jsonl(name: str) -> list[dict]:
 
 # ------------------------------------------------------------------ fig 1
 def fig_pipeline():
-    fig, ax = plt.subplots(figsize=(7.0, 2.55))
+    """Five-stage pipeline. Numbers come from the artefacts, not from memory."""
+    a = load_json("analysis.json") or {"graph": {"nodes": 0, "edges": 0}}
+    nodes = a["graph"]["nodes"]
+    edges = a["graph"]["edges"]
+
+    fig, ax = plt.subplots(figsize=(6.8, 2.15))
     ax.set_xlim(0, 10)
-    ax.set_ylim(0, 4.2)
+    ax.set_ylim(0, 3.1)
     ax.axis("off")
 
     stages = [
         ("S0\nIngest", "5 gz dumps\n1.78 GB", "serial\ngunzip"),
-        ("S1\nFilter+join", "168 M rows\nscanned", "chunk map-reduce\nprocess pool"),
-        ("S2\nGraph build", "478 k edges\n62 k nodes", "partitioned\nby title"),
-        ("S3\nGraph analytics", "PageRank\nLouvain", "row-block\n+ barrier"),
-        ("S4\nRule mining", "10 k baskets\nitemsets", "sharded count\nno locks"),
+        ("S1\nFilter+join", "169.6 M rows\nscanned", "chunk map-reduce\nprocess pool"),
+        ("S2\nGraph build", f"{edges / 1000:.0f} k edges\n{nodes / 1000:.0f} k nodes", "partitioned\nby title"),
+        ("S3\nGraph analytics", "PageRank\nLouvain", "row blocks\n+ barrier"),
+        ("S4\nRule mining", "21 k baskets\nitemsets", "sharded count\nno locks"),
     ]
-    w, h, y = 1.62, 1.45, 2.05
+    w, h, y = 1.70, 1.95, 0.55
     for i, (title, sub, par) in enumerate(stages):
-        x = 0.25 + i * 1.95
+        x = 0.20 + i * 1.96
         face = "#eef2f7" if i in (1, 3, 4) else "#f4f1ec"
         ax.add_patch(mpatches.FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.04,rounding_size=0.08",
                                              linewidth=0.8, edgecolor="#6b6b66", facecolor=face))
-        ax.text(x + w / 2, y + h - 0.26, title, ha="center", va="center", fontsize=8.6, weight="bold", color=INK)
-        ax.text(x + w / 2, y + h / 2 - 0.16, sub, ha="center", va="center", fontsize=7.4, color="#3c3c3a")
-        ax.text(x + w / 2, y + 0.20, par, ha="center", va="center", fontsize=6.8, color="#2f5d8c", style="italic")
+        ax.text(x + w / 2, y + h - 0.33, title, ha="center", va="center", fontsize=8.4, weight="bold", color=INK)
+        ax.text(x + w / 2, y + 0.95, sub, ha="center", va="center", fontsize=7.2, color="#3c3c3a",
+                linespacing=1.5)
+        ax.text(x + w / 2, y + 0.32, par, ha="center", va="center", fontsize=6.6, color="#2f5d8c",
+                style="italic", linespacing=1.4)
         if i:
-            ax.add_patch(FancyArrowPatch((x - 0.30, y + h / 2), (x - 0.02, y + h / 2),
+            ax.add_patch(FancyArrowPatch((x - 0.26, y + h / 2), (x - 0.02, y + h / 2),
                                          arrowstyle="-|>", mutation_scale=9, linewidth=0.8, color="#6b6b66"))
-    ax.text(0.25, 1.10, "parallel tiers", fontsize=7.2, color="#3c3c3a")
-    rows = [("tier 1   chunk map-reduce over byte ranges  (S1)", 0.72),
-            ("tier 2   blocked sparse matvec, barrier per iteration  (S3)", 0.40),
-            ("tier 3   sharded candidate counting, no locks  (S4)", 0.08)]
-    for label, ypos in rows:
-        ax.add_patch(mpatches.Rectangle((0.30, ypos - 0.05), 0.16, 0.16,
-                                        color="#eef2f7", ec="#6b6b66", lw=0.6))
-        ax.text(0.58, ypos + 0.03, label, fontsize=7.2, va="center")
     save(fig, "fig01_pipeline.png")
 
 

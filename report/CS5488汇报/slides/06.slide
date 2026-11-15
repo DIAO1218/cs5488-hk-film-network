@@ -1,0 +1,56 @@
+<Slide
+    style={{ width: 1280, height: 720, background: '#FFFFFF', position: 'relative', padding: 0 }}
+    notes={`第二个发现：中心性不等于产量。
+PageRank 和度数的秩相关只有 0.49，方向一致但远不是同一件事。分歧本身就是结论：靠大量低知名度作品堆起来的人，排名明显低于合作对象更核心的人。
+本地板块里排最前的六个人——谷峰、任达华、黄秋生、石坚、曾志伟、吴镇宇——正是电影史自己点名的那批人。而几个戏更多的演员没进榜。
+这说明 PageRank 在奖励"与枢纽反复合作"，而不是"署名多"。这正是我们要的区分，而且单靠度数拿不到。`}
+>
+    <Image src="assets/cityu_logo.png" style={{ position: 'absolute', top: 30, right: 64, width: 90, height: 62 }} />
+
+    <Box style={{ position: 'absolute', top: 60, left: 64, width: 700, flexDirection: 'column', gap: 10 }}>
+        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#C72A74', letterSpacing: 1.6 }}>
+            5 · FINDING 2
+        </Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1A1A1A', lineHeight: 1.2 }}>
+            Rank is not volume
+        </Text>
+    </Box>
+
+    <Box style={{ position: 'absolute', top: 196, left: 64, width: 470, flexDirection: 'column' }}>
+        <Text style={{ fontSize: 76, fontWeight: 'bold', color: '#C72A74', lineHeight: 1 }}>ρ 0.49</Text>
+        <Text style={{ fontSize: 14, color: '#6B6A66', lineHeight: 1.6, paddingTop: 10 }}>
+            Spearman correlation between PageRank and degree. Correlated, and clearly not the same
+            measurement.
+        </Text>
+
+        <Box style={{ paddingTop: 26 }}>
+            <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#1A1A1A', letterSpacing: 0.6 }}>
+                TOP RANK IN THE CANTONESE BLOC
+            </Text>
+            <Text style={{ fontSize: 14, color: '#1A1A1A', lineHeight: 1.9, paddingTop: 8 }}>
+                Ku Feng · Simon Yam · Anthony Wong
+                <br />
+                Shih Kien · Eric Tsang · Francis Ng
+            </Text>
+        </Box>
+
+        <Box style={{ marginTop: 24, paddingLeft: 12, borderLeft: '3px solid #C72A74' }}>
+            <Text style={{ fontSize: 13, color: '#1A1A1A', lineHeight: 1.55 }}>
+                Several higher-degree performers are absent: they accumulated credits, not central
+                collaborators.
+            </Text>
+        </Box>
+    </Box>
+
+    <Image
+        src="assets/fig05_pr_vs_degree.png"
+        style={{ position: 'absolute', top: 178, left: 596, width: 616, height: 432 }}
+    />
+
+    <Text style={{ position: 'absolute', top: 690, left: 64, fontSize: 11, color: '#6B6A66' }}>
+        PageRank on the symmetrised, weight-normalised graph · 100 iterations
+    </Text>
+    <Text style={{ position: 'absolute', top: 690, right: 64, fontSize: 11, color: '#6B6A66' }}>
+        06 / 08
+    </Text>
+</Slide>

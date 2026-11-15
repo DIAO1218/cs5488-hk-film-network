@@ -1,0 +1,45 @@
+<Slide
+    style={{ width: 1280, height: 720, background: '#FFFFFF', position: 'relative', padding: 0 }}
+    notes={`这页讲工程。三种负载形态完全不同，所以并行方式也不能一样。
+第一层是扫描：按字节区间切块，每个进程解析一段，父进程合并。这一步解析密集，Python 有 GIL，所以必须用进程而不是线程，用线程池会得到一条平的加速曲线。
+第二层是 PageRank：稀疏矩阵乘，按行分块，每个 worker 算自己那块，只在迭代边界同步一次。
+第三层是规则计数：分片累加，扫描过程中不需要任何锁，最后合并一次。
+最后一句话要留给听众：同机同数据，这三种方式给出的上限差了三倍。`}
+>
+    <Image src="assets/cityu_logo.png" style={{ position: 'absolute', top: 30, right: 64, width: 90, height: 62 }} />
+
+    <Box style={{ position: 'absolute', top: 60, left: 64, width: 800, flexDirection: 'column', gap: 10 }}>
+        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#C72A74', letterSpacing: 1.6 }}>
+            2 · ENGINEERING
+        </Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1A1A1A', lineHeight: 1.2 }}>
+            Three workloads, three strategies
+        </Text>
+    </Box>
+
+    <Box style={{ position: 'absolute', top: 158, left: 64, width: 1152, background: '#F7F1F3', padding: 18 }}>
+        <Image src="assets/fig01_pipeline.png" style={{ width: 1116, height: 378 }} />
+    </Box>
+
+    <Box style={{ position: 'absolute', top: 596, left: 64, width: 1152, flexDirection: 'row', gap: 40 }}>
+        <Text style={{ width: 340, fontSize: 12.5, color: '#6B6A66', lineHeight: 1.5 }}>
+            <span style={{ fontWeight: 'bold', color: '#1A1A1A' }}>Tier 1</span> · process pool, not
+            threads: the stage is parse-bound and the GIL blocks overlap
+        </Text>
+        <Text style={{ width: 340, fontSize: 12.5, color: '#6B6A66', lineHeight: 1.5 }}>
+            <span style={{ fontWeight: 'bold', color: '#1A1A1A' }}>Tier 2</span> · rows partition
+            cleanly; the only cost is one barrier per iteration
+        </Text>
+        <Text style={{ width: 340, fontSize: 12.5, color: '#6B6A66', lineHeight: 1.5 }}>
+            <span style={{ fontWeight: 'bold', color: '#1A1A1A' }}>Tier 3</span> · counting needs no
+            lock inside the scan; one merge at the end
+        </Text>
+    </Box>
+
+    <Text style={{ position: 'absolute', top: 690, left: 64, fontSize: 11, color: '#6B6A66' }}>
+        gzip is not seekable, so S0 decompression stays serial: 33.8 s, reported as a fixed cost
+    </Text>
+    <Text style={{ position: 'absolute', top: 690, right: 64, fontSize: 11, color: '#6B6A66' }}>
+        03 / 08
+    </Text>
+</Slide>

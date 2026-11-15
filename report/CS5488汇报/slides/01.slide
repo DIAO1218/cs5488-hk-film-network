@@ -1,0 +1,46 @@
+<Slide
+    style={{ width: 1280, height: 720, background: '#FFFFFF', position: 'relative', padding: 0 }}
+    notes={`明天开场不要介绍我们自己，直接抛问题。HK 电影工业在很长一段时间里靠一小群演员和技术人员反复合作，邵氏和嘉禾都有签约班底。所以我想问：如果只给算法一份"谁出现在哪部片里"的名单，它能自己还原出电影史里已经写清楚的那些圈子吗？
+第二句交代规模：我们扫了 IMDb 全量 1.7 亿行，最后落成 51,878 个人、38.8 万条合作边。这句话说完再翻页，不要停。`}
+>
+    <Image
+        src="assets/cover_swoosh.png"
+        style={{ position: 'absolute', top: 0, left: 0, width: 1280, height: 720, objectFit: 'cover' }}
+    />
+
+    <Box style={{ position: 'absolute', top: 52, left: 64, width: 430 }}>
+        <Image src="assets/cityu_lockup.png" style={{ width: 430, height: 90 }} />
+    </Box>
+
+    <Box style={{ position: 'absolute', top: 312, left: 64, width: 640, flexDirection: 'column', gap: 16 }}>
+        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#C72A74', letterSpacing: 1.6 }}>
+            CS5488 · DATA-INTENSIVE COMPUTING · GROUP PROJECT
+        </Text>
+        <Text style={{ fontSize: 42, fontWeight: 'bold', color: '#1A1A1A', lineHeight: 1.12 }}>
+            Does the network know
+            <br />
+            what film history knows?
+        </Text>
+        <Text style={{ fontSize: 18, color: '#6B6A66', lineHeight: 1.5 }}>
+            Parallel graph analytics of the Hong Kong release network
+        </Text>
+    </Box>
+
+    <Box
+        style={{
+            position: 'absolute',
+            top: 528,
+            left: 64,
+            width: 760,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 28,
+        }}
+    >
+        <Text style={{ fontSize: 13, color: '#6B6A66' }}>16 November 2026</Text>
+        <Box style={{ width: 1, height: 14, background: '#D8D2D4' }} />
+        <Text style={{ fontSize: 13, color: '#6B6A66' }}>170 M rows scanned</Text>
+        <Box style={{ width: 1, height: 14, background: '#D8D2D4' }} />
+        <Text style={{ fontSize: 13, color: '#6B6A66' }}>51,878 people · 388,168 edges</Text>
+    </Box>
+</Slide>

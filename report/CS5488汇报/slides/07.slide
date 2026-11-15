@@ -1,0 +1,62 @@
+<Slide
+    style={{ width: 1280, height: 720, background: '#FFFFFF', position: 'relative', padding: 0 }}
+    notes={`这一页可以砍，但如果时间够，它有个用处：先证明管线是对的，再谈结论。
+把每部片看成一个购物篮，装类型和班底角色，挖出 652 条规则。最强的那批是动画推冒险，提升度 7.8——这是类型分类体系本该给出的结果，不出意外才说明管线没错。
+真正有意思的是中间那批：摄影和配乐、导演和编剧这种班底对，在 2% 支持度以上还活着，这是片厂时代流水线的特征，而 2000 年之后明显变弱。
+另外职业聚类用完全不同的输入（署名数、活跃年代、峰值占比）分出了 8 类，和图上排出来的那批人是同一批，两个方法互相验证。`}
+>
+    <Image src="assets/cityu_logo.png" style={{ position: 'absolute', top: 30, right: 64, width: 90, height: 62 }} />
+
+    <Box style={{ position: 'absolute', top: 60, left: 64, width: 800, flexDirection: 'column', gap: 10 }}>
+        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#C72A74', letterSpacing: 1.6 }}>
+            6 · FINDING 3
+        </Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1A1A1A', lineHeight: 1.2 }}>
+            The rules validate the pipeline before they explain it
+        </Text>
+    </Box>
+
+    <Box style={{ position: 'absolute', top: 190, left: 64, width: 1152, flexDirection: 'row', gap: 24 }}>
+        <Box style={{ width: 368, background: '#F7F1F3', padding: 18 }}>
+            <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#C72A74', lineHeight: 1 }}>652</Text>
+            <Text style={{ fontSize: 12.5, color: '#6B6A66', lineHeight: 1.5, paddingTop: 8 }}>
+                rules at support ≥ 1%, confidence ≥ 0.6, lift &gt; 1.2
+            </Text>
+        </Box>
+        <Box style={{ width: 368, background: '#F7F1F3', padding: 18 }}>
+            <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#1A1A1A', lineHeight: 1 }}>7.8</Text>
+            <Text style={{ fontSize: 12.5, color: '#6B6A66', lineHeight: 1.5, paddingTop: 8 }}>
+                lift of animation → adventure, the strongest structural rule
+            </Text>
+        </Box>
+        <Box style={{ width: 368, background: '#F7F1F3', padding: 18 }}>
+            <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#1A1A1A', lineHeight: 1 }}>8</Text>
+            <Text style={{ fontSize: 12.5, color: '#6B6A66', lineHeight: 1.5, paddingTop: 8 }}>
+                career clusters (silhouette 0.66), agreeing with the graph ranking
+            </Text>
+        </Box>
+    </Box>
+
+    <Image
+        src="assets/fig09_rules.png"
+        style={{ position: 'absolute', top: 340, left: 700, width: 500, height: 330 }}
+    />
+
+    <Box style={{ position: 'absolute', top: 352, left: 64, width: 590, flexDirection: 'column', gap: 14 }}>
+        <Text style={{ fontSize: 14, color: '#1A1A1A', lineHeight: 1.6 }}>
+            The top rules are unsurprising on purpose: a genre taxonomy that returned anything else
+            would mean the pipeline is broken.
+        </Text>
+        <Text style={{ fontSize: 14, color: '#1A1A1A', lineHeight: 1.6 }}>
+            The signal sits in the middle of the distribution — crew pairs such as director with
+            writer surviving above 2% support, the assembly-line signature of the studio era.
+        </Text>
+    </Box>
+
+    <Text style={{ position: 'absolute', top: 690, left: 64, fontSize: 11, color: '#6B6A66' }}>
+        Baskets: one item per genre + one per crew category, 21,180 films
+    </Text>
+    <Text style={{ position: 'absolute', top: 690, right: 64, fontSize: 11, color: '#6B6A66' }}>
+        07 / 08
+    </Text>
+</Slide>

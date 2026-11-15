@@ -1,0 +1,121 @@
+<Slide
+    style={{ width: 1280, height: 720, background: '#FFFFFF', position: 'relative', padding: 0 }}
+    notes={`这是必须讲清楚的一页，也是答辩最容易被问的地方。IMDb 公开数据里根本没有出品国字段，只有各地发行别名。所以在香港上映不等于香港出品——每一部在港开画的好莱坞片，都会挂一条香港别名，常常还译成中文。
+我们试了三种筛法。只按地区筛，26,000 部，把进口片全放进来了；再要求中文别名，结果是 15,715 部，反而只筛出进口片，因为外片才需要译名；再要求中文原始片名，结果是 0，因为 IMDb 把原名罗马化了，"Mou gaan dou" 这种。
+所以我们不假装能隔离港产片，改分析发行网络，让算法自己去分板块。这句话是本项目的方法论核心。`}
+>
+    <Image
+        src="assets/cityu_logo.png"
+        style={{ position: 'absolute', top: 30, right: 64, width: 90, height: 62 }}
+    />
+
+    <Box style={{ position: 'absolute', top: 60, left: 64, width: 760, flexDirection: 'column', gap: 10 }}>
+        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#C72A74', letterSpacing: 1.6 }}>
+            1 · THE DATASET
+        </Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1A1A1A', lineHeight: 1.2 }}>
+            The data has no country field
+        </Text>
+    </Box>
+
+    <Text
+        style={{
+            position: 'absolute',
+            top: 150,
+            left: 64,
+            width: 1000,
+            fontSize: 15,
+            color: '#1A1A1A',
+            lineHeight: 1.6,
+        }}
+    >
+        A Hong Kong <span style={{ fontWeight: 'bold' }}>release</span> is not a Hong Kong
+        <span style={{ fontWeight: 'bold' }}> production</span>. Every Hollywood title that opened
+        there carries a Hong Kong alias, often translated into Chinese — and no column anywhere in
+        the dump says where a film was made.
+    </Text>
+
+    <Box style={{ position: 'absolute', top: 246, left: 64, width: 1152, flexDirection: 'column' }}>
+        <Box
+            style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingTop: 10,
+                paddingBottom: 18,
+                borderBottom: '1px solid #E7E2E4',
+            }}
+        >
+            <Text style={{ width: 520, fontSize: 14, color: '#1A1A1A' }}>Any alias with region = HK</Text>
+            <Text style={{ width: 250, fontSize: 40, fontWeight: 'bold', color: '#1A1A1A' }}>25,997</Text>
+            <Text style={{ width: 382, fontSize: 13, color: '#6B6A66' }}>admits every import</Text>
+        </Box>
+
+        <Box
+            style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingTop: 18,
+                paddingBottom: 18,
+                borderBottom: '1px solid #E7E2E4',
+            }}
+        >
+            <Text style={{ width: 520, fontSize: 14, color: '#1A1A1A' }}>+ a Cantonese or Mandarin alias</Text>
+            <Text style={{ width: 250, fontSize: 40, fontWeight: 'bold', color: '#1A1A1A' }}>15,715</Text>
+            <Text style={{ width: 382, fontSize: 13, color: '#6B6A66' }}>selects the imports, again</Text>
+        </Box>
+
+        <Box
+            style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingTop: 18,
+                paddingBottom: 18,
+                borderBottom: '1px solid #E7E2E4',
+            }}
+        >
+            <Text style={{ width: 520, fontSize: 14, color: '#1A1A1A' }}>+ a Chinese original title</Text>
+            <Text style={{ width: 250, fontSize: 40, fontWeight: 'bold', color: '#C72A74' }}>0</Text>
+            <Text style={{ width: 382, fontSize: 13, color: '#6B6A66' }}>IMDb romanises originals</Text>
+        </Box>
+    </Box>
+
+    <Box
+        style={{
+            position: 'absolute',
+            top: 486,
+            left: 64,
+            width: 1152,
+            paddingLeft: 16,
+            borderLeft: '3px solid #C72A74',
+        }}
+    >
+        <Text style={{ fontSize: 15, color: '#1A1A1A', lineHeight: 1.6 }}>
+            So we analyse the <span style={{ fontWeight: 'bold' }}>release</span> network, and let
+            community detection separate the cinemas. The three filters are in §4.1 of the report;
+            the caveat is in §5.4.
+        </Text>
+    </Box>
+
+    <Box
+        style={{
+            position: 'absolute',
+            top: 600,
+            left: 64,
+            width: 1152,
+            paddingTop: 14,
+            borderTop: '1px solid #E7E2E4',
+            flexDirection: 'row',
+        }}
+    >
+        <Text style={{ fontSize: 12, color: '#6B6A66' }}>
+            After the filter: 21,033 titles · 360,502 credited roles · 127,218 people
+        </Text>
+    </Box>
+
+    <Text style={{ position: 'absolute', top: 682, left: 64, fontSize: 11, color: '#6B6A66' }}>
+        Source: IMDb non-commercial datasets, measured 12 November 2026
+    </Text>
+    <Text style={{ position: 'absolute', top: 682, right: 64, fontSize: 11, color: '#6B6A66' }}>
+        02 / 08
+    </Text>
+</Slide>

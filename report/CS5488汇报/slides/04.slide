@@ -1,0 +1,73 @@
+<Slide
+    style={{ width: 1280, height: 720, background: '#FFFFFF', position: 'relative', padding: 0 }}
+    notes={`这是全场最该记住的一页。同一台机器、同一份数据，三个数字。
+扫描到 16 进程是 6.93 倍，因为最后要由父进程串行合并，尾部还会不均。
+规则计数 4.51 倍，计数的部分几乎线性，但候选生成那一段是零加速——它不规整，慢分片决定收尾。
+PageRank 最难看：四进程到 1.8 倍，到 16 进程反而退回 0.96，比串行还慢。而且我把图放大 16 倍再跑，八线程也只有 2.1 倍。所以它的上限是内存带宽，不是同步。
+如果有人问为什么还要报这个：一个越并行越慢的层，本身就是结论。`}
+>
+    <Image src="assets/cityu_logo.png" style={{ position: 'absolute', top: 30, right: 64, width: 90, height: 62 }} />
+
+    <Box style={{ position: 'absolute', top: 60, left: 64, width: 800, flexDirection: 'column', gap: 10 }}>
+        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#C72A74', letterSpacing: 1.6 }}>
+            3 · RESULTS
+        </Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1A1A1A', lineHeight: 1.2 }}>
+            Same machine, three ceilings
+        </Text>
+    </Box>
+
+    <Image
+        src="assets/fig10_scaling.png"
+        style={{ position: 'absolute', top: 176, left: 64, width: 620, height: 418 }}
+    />
+
+    <Box style={{ position: 'absolute', top: 168, left: 740, width: 476, flexDirection: 'column' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 12, paddingBottom: 6 }}>
+            <Text style={{ fontSize: 46, fontWeight: 'bold', color: '#1A1A1A', lineHeight: 1 }}>6.93×</Text>
+            <Text style={{ fontSize: 14, color: '#6B6A66', paddingBottom: 4 }}>scan · 16 workers</Text>
+        </Box>
+        <Text style={{ fontSize: 13, color: '#6B6A66', lineHeight: 1.5, paddingBottom: 20 }}>
+            stops where the parent-side merge starts — Amdahl's serial fraction, measured
+        </Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 12, paddingBottom: 6 }}>
+            <Text style={{ fontSize: 46, fontWeight: 'bold', color: '#1A1A1A', lineHeight: 1 }}>4.51×</Text>
+            <Text style={{ fontSize: 14, color: '#6B6A66', paddingBottom: 4 }}>rule counting</Text>
+        </Box>
+        <Text style={{ fontSize: 13, color: '#6B6A66', lineHeight: 1.5, paddingBottom: 20 }}>
+            counting scales; candidate generation sits at 1× because its cost is data-dependent
+        </Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 12, paddingBottom: 6 }}>
+            <Text style={{ fontSize: 46, fontWeight: 'bold', color: '#C72A74', lineHeight: 1 }}>0.96×</Text>
+            <Text style={{ fontSize: 14, color: '#6B6A66', paddingBottom: 4 }}>PageRank · at 16</Text>
+        </Box>
+        <Text style={{ fontSize: 13, color: '#6B6A66', lineHeight: 1.5 }}>
+            1.8× at four workers, then it goes backwards — and only 2.1× when the graph is 16× larger
+        </Text>
+    </Box>
+
+    <Box
+        style={{
+            position: 'absolute',
+            top: 600,
+            left: 740,
+            width: 476,
+            paddingLeft: 14,
+            borderLeft: '3px solid #C72A74',
+        }}
+    >
+        <Text style={{ fontSize: 13, color: '#1A1A1A', lineHeight: 1.5 }}>
+            First version spawned a pool per stage: 2.6× peak, then <span style={{ fontWeight: 'bold' }}>slower</span> at
+            16. One pool, one reference file per worker: 6.93×.
+        </Text>
+    </Box>
+
+    <Text style={{ position: 'absolute', top: 690, left: 64, fontSize: 11, color: '#6B6A66' }}>
+        Intel Core i7-12700H · 14 physical cores, 20 threads · 32 GB · timings exclude the serial gunzip
+    </Text>
+    <Text style={{ position: 'absolute', top: 690, right: 64, fontSize: 11, color: '#6B6A66' }}>
+        04 / 08
+    </Text>
+</Slide>

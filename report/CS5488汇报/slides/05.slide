@@ -1,0 +1,73 @@
+<Slide
+    style={{ width: 1280, height: 720, background: '#FFFFFF', position: 'relative', padding: 0 }}
+    notes={`第一个发现。我们没有给算法任何国家标签，它自己把电影分成了板块。
+最大的那一块 8,379 人，是本地粤语核心：任达华、黄秋生、曾志伟、刘德华、吴镇宇。第二大的是好莱坞 8,108 人，第三是邵氏武侠那批人，谷峰、罗烈。
+模块度 0.75，换随机种子跑第二遍，两个划分的 NMI 是 0.89，所以这个结果是可复现的，不是访问顺序的巧合。
+右下角那行是对照：标签传播便宜得多，但 87% 的节点塌进同一个标签，模块度只有 0.09。不量模块度就发现不了这个失败。`}
+>
+    <Image src="assets/cityu_logo.png" style={{ position: 'absolute', top: 30, right: 64, width: 90, height: 62 }} />
+
+    <Box style={{ position: 'absolute', top: 60, left: 64, width: 700, flexDirection: 'column', gap: 10 }}>
+        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#C72A74', letterSpacing: 1.6 }}>
+            4 · FINDING 1
+        </Text>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1A1A1A', lineHeight: 1.2 }}>
+            The blocs are real,
+            <br />
+            and nobody labelled them
+        </Text>
+    </Box>
+
+    <Box style={{ position: 'absolute', top: 220, left: 64, width: 540, flexDirection: 'column', gap: 18 }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 10 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#1A1A1A', lineHeight: 1 }}>0.75</Text>
+            <Text style={{ fontSize: 14, color: '#6B6A66', paddingBottom: 6 }}>modularity Q</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#1A1A1A', lineHeight: 1.55 }}>
+            1,285 communities · cross-seed stability <span style={{ fontWeight: 'bold' }}>NMI 0.89</span>
+            <br />
+            nine blocs cover 68% of 51,878 people
+        </Text>
+
+        <Box style={{ paddingTop: 6 }}>
+            <Text style={{ fontSize: 13.5, color: '#6B6A66', lineHeight: 1.75 }}>
+                <span style={{ fontWeight: 'bold', color: '#C72A74' }}>Cantonese core</span> 8,379 ·
+                Simon Yam, Anthony Wong, Eric Tsang
+                <br />
+                <span style={{ fontWeight: 'bold', color: '#1A1A1A' }}>Hollywood</span> 8,108 ·
+                <span style={{ fontWeight: 'bold', color: '#1A1A1A' }}>Shaw-era</span> 4,916 ·
+                <span style={{ fontWeight: 'bold', color: '#1A1A1A' }}>European</span> 4,196
+            </Text>
+        </Box>
+
+        <Box
+            style={{
+                marginTop: 6,
+                paddingLeft: 12,
+                borderLeft: '3px solid #E7E2E4',
+            }}
+        >
+            <Text style={{ fontSize: 13, color: '#6B6A66', lineHeight: 1.55 }}>
+                Control: label propagation is cheaper and collapses 87% of the graph into one label,
+                at Q = 0.09.
+            </Text>
+        </Box>
+
+        <Text style={{ fontSize: 13, color: '#6B6A66', lineHeight: 1.6, paddingTop: 4 }}>
+            The strongest inter-bloc link runs backwards in time — local ↔ Shaw-era, 17,195 weighted
+            collaborations, three times the next pair.
+        </Text>
+    </Box>
+
+    <Image
+        src="assets/fig06_network.png"
+        style={{ position: 'absolute', top: 158, left: 636, width: 580, height: 430 }}
+    />
+
+    <Text style={{ position: 'absolute', top: 690, left: 64, fontSize: 11, color: '#6B6A66' }}>
+        Louvain, resolution 1.0 · no country label was supplied to the algorithm
+    </Text>
+    <Text style={{ position: 'absolute', top: 690, right: 64, fontSize: 11, color: '#6B6A66' }}>
+        05 / 08
+    </Text>
+</Slide>
