@@ -1,39 +1,106 @@
-# Presentation pack — 4 minutes, 4 speakers
+# 汇报执行稿 — 4 人 × 60 秒
 
-The brief: 4 minutes of speaking, 1 minute of questions, every member speaks. The deck is 8 slides; each speaker owns two.
+对应 `report/CS5488汇报/CS5488汇报.pptx`（8 页）。**每人 2 页、60 秒**，合计 4 分钟 + 30 秒缓冲。
 
-| Time | Speaker | Slides | What they must land |
+每人只需要背自己那 4 句。但**交接句必须说出口**——卡壳几乎都发生在换人那两秒。
+
+---
+
+## 时间轴
+
+| 时间 | 人 | 页 | 你负责的唯一数字 |
 |---|---|---|---|
-| 0:00–0:35 | 1 | 1–2 | The question, and the fact that IMDb has no country field. Open with the question, not with "our project is about…" |
-| 0:35–1:00 | 1 | 2 | The three filters and their three answers: 26,000 / 15,700 / 0. Then the decision. |
-| 1:00–1:30 | 2 | 3 | Three workloads → three strategies, and why process pool rather than threads (the GIL). |
-| 1:30–2:00 | 2 | 4 | The three numbers: 6.8×, 4.5×, ~1.4×. One sentence of reason each. |
-| 2:00–2:30 | 3 | 5 | Blocs emerge without labels; Q = 0.77, NMI = 0.89; label propagation fails at 0.08. |
-| 2:30–3:00 | 3 | 6 | Rank ≠ volume; the top six are the documented core. |
-| 3:00–3:30 | 4 | 7 | Rules validate the pipeline; career clusters agree with the graph. |
-| 3:30–3:55 | 4 | 8 | What we would change, what we would not repeat, one command reproduces everything. |
-| 3:55–4:00 | 4 | — | Stop talking. Do not add a thank-you slide. |
+| 0:00–1:00 | **A** | 1–2 | 25,997 → 21,033 |
+| 1:00–2:00 | **B** | 3–4 | 6.93× / 4.51× / 0.96× |
+| 2:00–3:00 | **C** | 5–6 | Q = 0.75，ρ = 0.49 |
+| 3:00–4:00 | **D** | 7–8 | 652 |
 
-## Rules that decide whether this scores
+---
 
-1. **Never read a bullet aloud.** The bullet is the evidence; the sentence is the claim.
-2. **One number per slide, spoken slowly.** 6.8× at 16 workers. Then stop. Do not list all five.
-3. **If you overrun, cut slide 7, never slides 2 or 4.** The data defect and the scaling curve are the two things an examiner will remember.
-4. **Every speaker names the next speaker**, so the handover is not a silence.
+## A · 0:00–1:00 ｜ 提问 + 数据缺陷
 
-## Questions to expect
+> Film historians describe Hong Kong cinema as a small pool of people reused across thousands of
+> films. We asked whether an algorithm given nothing but cast lists would find the same circles.
+>
+> There was a problem first. This dataset has no country field — filtering by release region gives
+> twenty-six thousand titles, and it puts Brad Pitt inside the Hong Kong network. So we stopped
+> calling it a production list, analysed the release network, and let the algorithm separate the
+> cinemas.
 
-**"Isn't 25,997 titles mostly foreign films? How can you call this a Hong Kong network?"**
-The strongest question, and slide 2 is the answer. We do not call it a Hong Kong *production* network; no field in the release identifies production country, and we report the three definitions we tested. What we analyse is the release network, and the local industry enters it as the Cantonese-language bloc that the algorithm finds without a country label. Bloc membership is estimated from collaboration data, so conclusions about structure inside a bloc survive the weaker premise; conclusions about market share would not.
+**交接（必说）：** "That decision is what makes the next part measurable."
 
-**"Why is your PageRank speedup so poor — is that a failure?"**
-No, and the reason is measured, not asserted. At 478k edges an iteration costs about 1 ms, which is comparable to thread dispatch, and when we grew the graph sixteen-fold the speedup stayed near 2× rather than improving — so the limit is memory bandwidth on a sparse matvec, not synchronisation. Two different failure modes; we distinguish them with the E3c experiment.
+要点：不要解释项目背景，直接抛问题；"Brad Pitt" 这个词是让人抬头的钩子，说慢一点。
 
-**"Why not Spark / Dask / a cluster?"**
-Because the binding constraint here is one machine's memory and the per-iteration dependency, not the volume of data. The scan tier at 6.8× on 16 cores already exceeds what a single-node Spark setup would give at this size, once JVM start-up and shuffle are counted. Say this only if asked; do not volunteer it.
+---
 
-**"How did you verify the communities are real?"**
-Two ways. Cross-seed NMI of 0.89 — the partition is reproducible. And the membership is interpretable: the blocs correspond to cinemas that were never supplied to the algorithm. We do not claim the boundaries are ground truth; Louvain's resolution limit is visible in the sweep at 0.25, 0.5 and 1.0.
+## B · 1:00–2:00 ｜ 三种策略 + 三个天花板
 
-**"What is the contribution of each member?"**
-Have the exact percentages ready and be able to name a concrete artefact for each — a module, a figure, a section. Vague percentages are the single fastest way to lose the individual score.
+> Three workloads, three strategies. The scan is parse-bound, so it runs on a process pool — threads
+> would be blocked by the GIL. PageRank partitions rows and synchronises once per iteration. Rule
+> counting shards without locks.
+>
+> Same machine, same data: six point nine times, four point five times — and PageRank at sixteen
+> workers is zero point nine six. Slower than serial. A tier that degrades under parallelism is a
+> result, not a failure.
+
+**交接：** "So the engineering gave us three ceilings. The network itself gave us something stranger."
+
+要点：三个数字报完就停，不要逐个解释；0.96 那句要停顿，它是全场最反直觉的一句。
+
+---
+
+## C · 2:00–3:00 ｜ 两个发现
+
+> No country label was supplied, and Louvain still separates the cinemas: modularity zero point
+> seven five, stable across random seeds. The largest bloc, eight thousand people, is the Cantonese
+> core — Simon Yam, Anthony Wong, Eric Tsang.
+>
+> Inside it, PageRank and degree correlate at only zero point four nine. The top names are the ones
+> the industry's own histories put at the centre — not the busiest performers.
+
+**交接：** "Which brings us to the check that everything else rests on."
+
+要点：说人名时看观众，不要看屏；"no country label was supplied" 是本项目最硬的一句。
+
+---
+
+## D · 3:00–4:00 ｜ 验证 + 收束
+
+> The rules come first as a check, not as a finding: six hundred and fifty-two, and the strongest
+> ones are unsurprising on purpose. If a genre taxonomy produced anything else, the pipeline would
+> be broken.
+>
+> What we would change: FP-Growth, a real country label, dynamic communities. What we would not
+> repeat: parallel PageRank at this scale. Every number is one command away in the repository.
+
+要点：最后一句说完就停，不要说"谢谢大家"再等掌声。超时的话，第 7 页整段（652 那句）可以直接删掉。
+
+---
+
+## 三个必答题（每人只需守自己那段，但都要知道答案）
+
+**"PageRank 只有 1.8×，是不是白做了？"**
+不是。四进程到顶，十六进程退回 0.96，说明这个规模下并行是负收益；但图放大十六倍后八线程仍只有
+2.1×，所以上限是内存带宽，不是同步。能区分"该并行"和"不该并行"，本身就是结论。
+
+**"2.6 万部里大部分是外片，还能叫香港网络吗？"**
+我们从没称它香港出品网络。这份数据没有出品国字段，三种筛法分别得到 25,997 / 15,715 / 0，报告 §4.1
+全写了。我们分析发行网络，本地工业以粤语板块的形式被无监督地找出来。
+
+**"板块凭什么说是真的？"**
+跨随机种子 NMI 0.89，可复现；成员可解释，粤语核心里是任达华、黄秋生、曾志伟；分辨率扫描
+（0.25 / 0.5 / 1.0）也把划分如何随参数变化列出来了。
+
+---
+
+## 今晚怎么练
+
+1. **只背自己那 4 句**，不看幻灯片。背到能连续说完不卡。
+2. **两个人一组对接**：A 说完交接句，B 立刻接——练那两秒的衔接。
+3. **整组连排两遍**，掐表。第一遍必超，第二遍砍形容词。
+4. 目标：整段 **3:30**，留 30 秒。
+
+## 明天到场 15 分钟
+
+PDF 放映（`CS5488汇报.pdf`）→ 确认 16:9 → 从头翻一遍确认翻页速度 → 试翻页笔 → 计时器交给 D
+（最后一个人，最清楚还剩多少时间）。
