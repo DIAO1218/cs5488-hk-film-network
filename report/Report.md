@@ -2,7 +2,7 @@
 
 ## Parallel Graph Analytics of the Hong Kong Release Network from 180 Million IMDb Records
 
-**CS5488 Big Data Algorithms and Technology — Group Project Final Report**
+**CS5488 Big Data Algorithms and Tech — Group Project Final Report**
 
 November 2026
 

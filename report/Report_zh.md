@@ -2,7 +2,7 @@
 
 ## 基于 1.8 亿条 IMDb 记录的香港发行网络并行图分析
 
-**CS5488 Big Data Algorithms and Technology — 小组项目最终报告（中文对照版）**
+**CS5488 Big Data Algorithms and Tech — 小组项目最终报告（中文对照版）**
 
 2026 年 11 月
 

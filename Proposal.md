@@ -2,7 +2,7 @@
 
 ## Co-star Networks, Genre Associations and Talent Flow from 180 Million IMDb Records
 
-**CS5488 Big Data Algorithms and Technology — Group Project Proposal**
+**CS5488 Big Data Algorithms and Tech — Group Project Proposal**
 
 November 2026
 

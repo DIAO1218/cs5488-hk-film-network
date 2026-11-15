@@ -1,7 +1,7 @@
 # 香港发行网络的并行图分析
 
 > Parallel Graph Analytics of the Hong Kong Release Network
-> CS5488 Big Data Algorithms and Technology · 小组项目
+> CS5488 Big Data Algorithms and Tech · 小组项目
 
 香港电影市场是全球联系最紧密的合作网络之一：一小群演员与技术人员，被数千部作品反复使用。
 本项目用 IMDb 公开全量数据重建这张网络——**扫描 1.696 亿行、五个源文件**——并用三种不同的
@@ -158,5 +158,5 @@ python-docx、python-pptx。
 
 ## 许可与用途
 
-CS5488（Big Data Algorithms and Technology）课程作业。源码供参考；IMDb 数据仍归 IMDb 的非商业条款约束，
+CS5488（Big Data Algorithms and Tech）课程作业。源码供参考；IMDb 数据仍归 IMDb 的非商业条款约束，
 未包含在本仓库中。

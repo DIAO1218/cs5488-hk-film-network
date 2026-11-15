@@ -418,7 +418,7 @@ def build() -> None:
     main = PREAMBLE % {
         "title": title,
         "subtitle": subtitle,
-        "author": "CS5488 Big Data Algorithms and Technology \\textemdash{} Group Project",
+        "author": "CS5488 Big Data Algorithms and Tech \\textemdash{} Group Project",
         "date": date or r"\today",
         "cover": cover_text,
         "inputs": "\n".join(inputs),

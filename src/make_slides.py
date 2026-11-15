@@ -122,7 +122,7 @@ def build():
     textbox(s, 0.9, 3.05, 11.2, 1.3,
             "Parallel graph analytics of the Hong Kong release network", size=22, color=MUTED)
     textbox(s, 0.9, 4.55, 11.2, 1.0,
-            "CS5488 Big Data Algorithms and Technology   ·   Group project   ·   November 2026", size=14, color=MUTED)
+            "CS5488 Big Data Algorithms and Tech   ·   Group project   ·   November 2026", size=14, color=MUTED)
     textbox(s, 0.9, 6.35, 11.2, 0.4,
             f"170 M rows scanned   ·   {a['graph']['edges']:,} co-star edges   ·   three parallel tiers on 20 threads",
             size=13, color=ACCENT)

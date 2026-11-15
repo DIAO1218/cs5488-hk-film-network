@@ -51,3 +51,6 @@
 === boot pid=23872 ts=2026-11-15 10:04:47.737 cwd=C:\Users\26657\Desktop\CS5488\Project_Work\report\CS5488汇报 argv=C:\Users\26657\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl CS5488汇报.pptx --dsl-file slides/01.slide --page-index 0 ===
 [2026-11-15 10:04:47.734] [INFO ] [pid=23872] [server-url] baseUrl=http://127.0.0.1:39099 source=env
 [2026-11-15 10:04:47.782] [INFO ] [pid=23872] [slide-version] fileId=sid_mwh6 version=16 filePath=C:\Users\26657\Desktop\CS5488\Project_Work\report\CS5488汇报\CS5488汇报.pptx
+=== boot pid=6280 ts=2026-11-15 10:10:25.018 cwd=C:\Users\26657\Desktop\CS5488\Project_Work\report\CS5488汇报 argv=C:\Users\26657\.workbuddy\binaries\node\versions\22.22.2-6\node_modules\@tencent\slidep\dist\index.js upsert-dsl CS5488汇报.pptx --dsl-file slides/01.slide --page-index 0 ===
+[2026-11-15 10:10:25.017] [INFO ] [pid=6280] [server-url] baseUrl=http://127.0.0.1:39099 source=env
+[2026-11-15 10:10:25.057] [INFO ] [pid=6280] [slide-version] fileId=sid_mwh6 version=17 filePath=C:\Users\26657\Desktop\CS5488\Project_Work\report\CS5488汇报\CS5488汇报.pptx
