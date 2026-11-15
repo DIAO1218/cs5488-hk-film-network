@@ -14,7 +14,7 @@
 
     <Box style={{ position: 'absolute', top: 312, left: 64, width: 640, flexDirection: 'column', gap: 16 }}>
         <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#C72A74', letterSpacing: 1.6 }}>
-            CS5488 · DATA-INTENSIVE COMPUTING · GROUP PROJECT
+            CS5488 · BIG DATA ALGORITHMS AND TECHNOLOGY · GROUP PROJECT
         </Text>
         <Text style={{ fontSize: 42, fontWeight: 'bold', color: '#1A1A1A', lineHeight: 1.12 }}>
             Does the network know
