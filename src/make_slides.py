@@ -106,6 +106,9 @@ def build():
     s1 = sp(e1)
     s4 = sp(e4)
     s3 = sp(e3)
+    s3_best = max((e3[0]["seconds"] / r["seconds"]) for r in e3) if e3 else 0
+    s3_last = (e3[0]["seconds"] / e3[-1]["seconds"]) if e3 else 0
+    e3_best_p = max(e3, key=lambda r: e3[0]["seconds"] / r["seconds"])["workers"] if e3 else 0
     top9 = 100 * sum(c["share"] for c in a["communities"][:9])
     b3 = max(r["speedup"] for r in e3c) if e3c else 0
 
@@ -178,18 +181,20 @@ def build():
         ("serial merge is the tail", 1),
         (f"Rule counting  {s4:.1f}× at 16 workers", 0),
         ("candidate generation saturates at ~1×", 1),
-        (f"PageRank  {s3:.1f}× — and {b3:.1f}× at 16× the graph", 0),
-        ("bandwidth-bound, not overhead-bound", 1),
+        (f"PageRank  {s3_best:.1f}× at {e3_best_p} workers, then {s3_last:.2f}× at 16", 0),
+        (f"{b3:.1f}× even when the graph is 16× larger: bandwidth-bound", 1),
     ], size=14)
     textbox(s, 7.35, 5.35, 5.3, 1.3,
             "First version created a pool per stage: 2.6× peak, then slower at 16 workers. "
-            "One pool, one reference file per worker: 6.8×.",
+            f"One pool, one reference file per worker: {s1:.1f}×.",
             size=12, color=MUTED)
-    note(s, "SPEAKER 2 (60 s). Give the three numbers in order and explain each in one sentence. E1 slows "
-            "because the parent merges the partial results serially. E4's candidate generation is "
-            "irregular, so the slowest shard decides the finish. PageRank does not improve when the graph "
-            "grows sixteen-fold, which means the limit is memory bandwidth, not synchronisation — a "
-            "different failure mode, and a more interesting one.")
+    note(s, "SPEAKER 2 (60 s). Three numbers, one sentence of reason each. E1 slows because the parent "
+            "merges the partial results serially. E4's candidate generation is irregular, so the slowest "
+            f"shard decides the finish. PageRank peaks at {s3_best:.1f}x with four workers and is back to "
+            f"{s3_last:.2f}x by sixteen, which is the honest way to put it: it does not scale, it degrades. "
+            f"And even with a graph sixteen times larger, eight threads only reach {b3:.1f}x, so the ceiling "
+            "is memory bandwidth, not the barrier. If asked why we still report it: because a tier that "
+            "gets worse under parallelism is a result, not a failure.")
 
     # 5 ---------------------------------------------------------------- blocs
     s = base(prs, "The blocs are real, and nobody labelled them", "4 · finding 1")
@@ -204,14 +209,14 @@ def build():
     ], size=14)
     note(s, "SPEAKER 3 (60 s). The headline: no country label was given to the algorithm, and it still "
             "separated the cinemas. Then the negative control — label propagation is five times cheaper "
-            "and returns one giant blob at modularity 0.08. That is why we report both: the cheap method "
+            f"and returns one giant blob at modularity {cm['lpa']['q']:.2f}. That is why we report both: the cheap method "
             "fails in a way that is invisible unless you measure modularity.")
 
     # 6 ---------------------------------------------------------------- local core
     s = base(prs, "Inside the local bloc, rank ≠ volume", "5 · finding 2")
     picture(s, "fig05_pr_vs_degree.png", 0.62, 1.6, width=6.4)
     bullets(s, 7.3, 1.7, 5.5, 4.8, [
-        ("PageRank and degree correlate at ρ = 0.53 — related, not the same", 0),
+        (f"PageRank and degree correlate at ρ = {a['degree_pagerank_spearman']:.2f} — related, not the same", 0),
         ("Top rank: Ku Feng, Simon Yam, Anthony Wong, Shih Kien, Eric Tsang, Francis Ng", 0),
         ("These are the people the industry's own histories name", 0),
         ("Several higher-degree performers do not appear", 1),
