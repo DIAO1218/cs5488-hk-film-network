@@ -21,9 +21,5 @@ report/latex/*.synctex.gz
 ~$*
 *.tmp
 
-# Stale export: Report.pdf was an older build kept open by a viewer and could not be
-# overwritten. The current PDF is Report_final.pdf.
-report/Report.pdf
-
 .DS_Store
 Thumbs.db
