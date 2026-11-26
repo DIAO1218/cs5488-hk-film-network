@@ -39,7 +39,7 @@ HIGHLIGHTS = [
 
 DELIVERABLES = [
     ("report.pdf", "Main project report (23 pages)"),
-    ("slides.pdf", "Presentation slides, 11 pages (8 + 3 Q&A backups)"),
+    ("slides.pdf", "Presentation slides, 11 pages"),
     ("data.md", "Data sources, licence, download script and derived graph"),
 ]
 
