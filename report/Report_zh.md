@@ -350,21 +350,3 @@ PageRank 扩展性很差，而原因是结构性的，不是实现的缺陷：�
 9. Fortunato, S., Barthélemy, M. (2007). Resolution limit in community detection. *PNAS*, 104(1), 36–41. https://doi.org/10.1073/pnas.0605965104
 
 ---
-
-## 附录 A　可复现性
-
-```
-Project_Work/
-  src/download_data.py   五个数据包的分段并行下载
-  src/s1_scan.py         字节区间扫描器（并行的基本原语）
-  src/pipeline.py        S0/S1 驱动，产出工作集
-  src/s2_graph.py        演员展开与边构建
-  src/s3_analytics.py    PageRank、Louvain、标签传播、介数
-  src/s4_rules.py        带分片计数的 Apriori
-  src/bench.py           E1、E1b、E3、E3b、E3c、E4 与扩展性扫描
-  src/analyze.py         实质分析，写出 results/analysis.json
-  src/figures.py         全部图表，从 results/ 重新生成
-  results/*.jsonl        每次基准运行一行
-```
-
-4.6 节的每一个数字都由 `python src/bench.py --exp all` 重新生成；每一张图由 `python src/figures.py` 生成。行数记录在下载当时的 `results/s1_summary.json` 中。

@@ -45,7 +45,6 @@ RENAME = {
     "6. Conclusion and Future Work": "Conclusion",
     "7. Individual Contribution Statement": "Individual Contribution Statement",
     "8. References": "References",
-    "Appendix A. Reproducibility": "Appendix A. Reproducibility",
 }
 
 
@@ -123,8 +122,8 @@ class Writer:
 
     def h1(self, text):
         p = self.doc.add_paragraph()
-        p.paragraph_format.space_before = Pt(14)
-        p.paragraph_format.space_after = Pt(6)
+        p.paragraph_format.space_before = Pt(11)
+        p.paragraph_format.space_after = Pt(5)
         p.paragraph_format.keep_with_next = True
         M.set_run_font(p.add_run(text), name="Cambria", size=Pt(16), bold=True,
                        color=RGBColor(0x1A, 0x1A, 0x1A))
@@ -244,16 +243,21 @@ class Writer:
                 self.bullets(items)
                 continue
             if re.match(r"^\d+\.\s", s):
+                start = i
                 k = 0
                 while i < n and re.match(r"^\d+\.\s", lines[i].strip()):
                     k += 1
                     p = self.doc.add_paragraph()
                     p.paragraph_format.left_indent = Cm(0.9)
                     p.paragraph_format.first_line_indent = Cm(-0.55)
-                    p.paragraph_format.space_after = Pt(2)
+                    p.paragraph_format.space_after = Pt(1)
+                    p.paragraph_format.line_spacing = 1.0
                     M.set_run_font(p.add_run(f"{k}.  "), size=BODY_SIZE)
                     M.add_inline(p, re.sub(r"^\d+\.\s*", "", lines[i].strip()), size=BODY_SIZE)
                     i += 1
+                item_paras = self.doc.paragraphs[-k:] if k else []
+                for q in item_paras[:-1]:
+                    q.paragraph_format.keep_with_next = True
                 continue
             if s.startswith("```"):
                 i += 1
@@ -330,13 +334,13 @@ def build() -> None:
     for label, value in (("Student IDs", ids), ("Student Names", names), ("Student Emails", mails)):
         p = doc.add_paragraph()
         p.paragraph_format.space_after = Pt(2)
-        M.set_run_font(p.add_run(f"{label}\t: "), size=Pt(10), bold=True)
+        M.set_run_font(p.add_run(f"{label}\t: "), size=Pt(10))
         M.set_run_font(p.add_run(value), size=Pt(10))
 
     p = doc.add_paragraph()
     p.paragraph_format.space_before = Pt(18)
     p.paragraph_format.space_after = Pt(2)
-    M.set_run_font(p.add_run("Title:"), size=Pt(10), bold=True)
+    M.set_run_font(p.add_run("Title:"), size=Pt(10))
 
     p = doc.add_paragraph()
     p.paragraph_format.space_after = Pt(14)
@@ -345,7 +349,7 @@ def build() -> None:
 
     p = doc.add_paragraph()
     p.paragraph_format.space_after = Pt(3)
-    M.set_run_font(p.add_run("Abstract: (max 300 words)"), size=Pt(10), bold=True)
+    M.set_run_font(p.add_run("Abstract: (max 300 words)"), size=Pt(10))
 
     sections = split_sections(lines)
     by_name = {t: b for t, b in sections}
@@ -380,7 +384,7 @@ def build() -> None:
     # ---- remaining sections
     order = ["3. Methodology", "4. Results and Analysis", "5. Discussion",
              "6. Conclusion and Future Work", "7. Individual Contribution Statement",
-             "8. References", "Appendix A. Reproducibility"]
+             "8. References"]
     for name in order:
         body_lines = by_name.get(name, [])
         if not body_lines:

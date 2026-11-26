@@ -60,8 +60,9 @@ def add_inline(paragraph, text, base_bold=False, base_italic=False, size=BODY_SI
         if not token:
             continue
         if token.startswith("**") and token.endswith("**") and len(token) > 4:
+            # Body prose carries no bold: the emphasis is dropped, the words stay.
             run = paragraph.add_run(token[2:-2])
-            set_run_font(run, size=size, bold=True, italic=base_italic)
+            set_run_font(run, size=size, bold=base_bold, italic=base_italic)
         elif token.startswith("`") and token.endswith("`") and len(token) > 2:
             run = paragraph.add_run(token[1:-1])
             set_run_font(run, name="Consolas", size=Pt(size.pt - 0.5), bold=base_bold)
