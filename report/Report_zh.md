@@ -330,10 +330,10 @@ PageRank 扩展性很差，而原因是结构性的，不是实现的缺陷：�
 
 | 成员 | 贡献 | 占比 |
 |---|---|---|
-| Liuxianjia DIAO | 数据获取与校验；S1 管线；E1 与 E1b 实验；扩展性测量框架 | 27% |
-| Lingxiao Zhou | S2 建图；PageRank 与 Louvain 实现；E3 实验 | 27% |
-| YANG Ziyao | S4 规则挖掘；职业聚类；图 3–9 与图 14 | 26% |
-| LI Jin | 报告撰写；图表规范统一；演示文稿；问答准备 | 20% |
+| Liuxianjia DIAO | 数据获取与校验；S1 管线；E1 与 E1b 实验；扩展性测量框架 | 25% |
+| Lingxiao Zhou | S2 建图；PageRank 与 Louvain 实现；E3 实验 | 25% |
+| YANG Ziyao | S4 规则挖掘；职业聚类；图 3–9 与图 14 | 25% |
+| LI Jin | 报告撰写；图表规范统一；演示文稿；问答准备 | 25% |
 
 ---
 

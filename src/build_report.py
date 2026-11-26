@@ -125,7 +125,7 @@ def main() -> None:
 
     MEMBERS = [('60371620', 'Liuxianjia DIAO', 'ldiao7-c@my.cityu.edu.hk'), ('61080389', 'Lingxiao Zhou', 'lingxzhou3-c@my.cityu.edu.hk'), ('60018560', 'YANG Ziyao', 'ziyaoyang5-c@my.cityu.edu.hk'), ('60263031', 'LI Jin', 'k1160967796@163.com')]
     ROLES = ['Data acquisition and validation; S1 pipeline; E1 and E1b experiments; scaling harness', 'S2 graph construction; PageRank and Louvain implementations; E3 experiment', 'S4 rule mining; career clustering; figures 3–9 and 14', 'Report writing; figure standardisation; slide deck; Q&A preparation']
-    SHARES = ['27%', '27%', '26%', '20%']
+    SHARES = ['25%', '25%', '25%', '25%']
 
     md = f"""# Cinema Blocs and Local Talent Structure
 

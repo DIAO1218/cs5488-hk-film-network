@@ -334,10 +334,10 @@ Future work, in the order we would attempt it: replace Apriori's candidate gener
 
 | Member | Contribution | Share |
 |---|---|---|
-| Liuxianjia DIAO | Data acquisition and validation; S1 pipeline; E1 and E1b experiments; scaling harness | 27% |
-| Lingxiao Zhou | S2 graph construction; PageRank and Louvain implementations; E3 experiment | 27% |
-| YANG Ziyao | S4 rule mining; career clustering; figures 3–9 and 14 | 26% |
-| LI Jin | Report writing; figure standardisation; slide deck; Q&A preparation | 20% |
+| Liuxianjia DIAO | Data acquisition and validation; S1 pipeline; E1 and E1b experiments; scaling harness | 25% |
+| Lingxiao Zhou | S2 graph construction; PageRank and Louvain implementations; E3 experiment | 25% |
+| YANG Ziyao | S4 rule mining; career clustering; figures 3–9 and 14 | 25% |
+| LI Jin | Report writing; figure standardisation; slide deck; Q&A preparation | 25% |
 
 ---
 
