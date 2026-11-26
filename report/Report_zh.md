@@ -86,19 +86,19 @@
 
 三层的设计刻意不同，因为三种负载压的是内存层次的不同部位，且依赖结构各不相同。
 
-**第 1 层——字节区间分块 map-reduce（S1、S2）。** 每个工作进程取未压缩文件中一段连续的字节区间，区间边界对齐到换行符，保证不切断记录；随后独立解析、对共享的只读片名集合做地区过滤，并返回过滤后的行。父进程合并各分块的部分结果。选择基于进程而非线程有具体原因：该阶段受解析约束，而 Python 的全局解释器锁使线程无法真正重叠解析工作，因此线程池在任何核数下都会得到一条平坦的加速曲线。
+**第 1 层——字节区间分块 map-reduce（S1、S2）。** 每个工作进程取未压缩文件中一段连续的字节区间，区间边界对齐到换行符，保证不切断记录；随后独立解析、对共享的只读片名集合做地区过滤，并返回过滤后的行。父进程合并各分块的部分结果 [8]。选择基于进程而非线程有具体原因：该阶段受解析约束，而 Python 的全局解释器锁使线程无法真正重叠解析工作，因此线程池在任何核数下都会得到一条平坦的加速曲线。
 
 分块大小是调优参数而非常数。小块改善负载均衡、并把工作集留在 L2/L3 内，但会放大任务开销和待合并的部分结果数量；大块减少开销，却让部分核心在收尾时空闲。4.6 节给出扫描结果与选定值。
 
-**第 2 层——分块稀疏矩阵乘（S3）。** 图以压缩稀疏行矩阵存放：51,878 个节点、388,168 条无向边，对称化并按行归一为转移矩阵。于是 PageRank 就是一串稀疏矩阵—向量乘，问题因此不是"如何并行"——行可以干净地切分——而是"如何让向量留在缓存里"，以及"每轮迭代能负担多少同步"。我们采用属主计算行分块的方式：转移矩阵一次性切成行块，每个工作进程将自己的分块与当前向量相乘，写入输出向量中属于自己的切片，各分块只在迭代边界处同步。由于每个分块的输出互不相交，不存在写冲突；唯一的成本是屏障。
+**第 2 层——分块稀疏矩阵乘（S3）。** 图以压缩稀疏行矩阵存放：51,878 个节点、388,168 条无向边，对称化并按行归一为转移矩阵。于是 PageRank [1] 就是一串稀疏矩阵—向量乘，问题因此不是"如何并行"——行可以干净地切分——而是"如何让向量留在缓存里"，以及"每轮迭代能负担多少同步"。我们采用属主计算行分块的方式：转移矩阵一次性切成行块，每个工作进程将自己的分块与当前向量相乘，写入输出向量中属于自己的切片，各分块只在迭代边界处同步。由于每个分块的输出互不相交，不存在写冲突；唯一的成本是屏障。
 
-**第 3 层——分片无锁计数（S4）。** Apriori 挖掘的两个阶段具有相反的并行特性。候选生成是不规整的：检验一个候选的代价取决于有多少购物篮包含它，因此静态切分会造成严重不均衡。计数是规整的：每个工作进程在自己的购物篮分片上累加本地计数，最后合并一次，扫描过程中不需任何锁。把两个阶段分开度量，并证明不均衡完全出在第一个阶段，正是 4.6 节的实证要点。
+**第 3 层——分片无锁计数（S4）。** Apriori 挖掘 [5] 的两个阶段具有相反的并行特性。候选生成是不规整的：检验一个候选的代价取决于有多少购物篮包含它，因此静态切分会造成严重不均衡。计数是规整的：每个工作进程在自己的购物篮分片上累加本地计数，最后合并一次，扫描过程中不需任何锁。把两个阶段分开度量，并证明不均衡完全出在第一个阶段，正是 4.6 节的实证要点。
 
 ### 3.3 分析方法
 
-**中心性。** 度统计合作次数，却把"多产"和"重要"混为一谈。在无向、按权重归一化的图上计算 PageRank 可以纠正这一点：它让重要性沿合作结构传播，因此一位反复与主角合作的资深配角能够积累排名，而不必出现在度排行榜首。精确介数中心性是 O(VE)，在此规模下不可行；我们用 k = 64 个枢轴源的 Brandes 抽样并缩放结果，同时给出相对 k = 256 运行的抽样偏差。
+**中心性。** 度统计合作次数，却把"多产"和"重要"混为一谈。在无向、按权重归一化的图上计算 PageRank 可以纠正这一点：它让重要性沿合作结构传播，因此一位反复与主角合作的资深配角能够积累排名，而不必出现在度排行榜首。精确介数中心性是 O(VE)，在此规模下不可行；我们用 k = 64 个枢轴源的 Brandes 算法 [4] 抽样并缩放结果，同时给出相对 k = 256 运行的抽样偏差。
 
-**社区发现。** 以 Louvain 模块度优化作为主划分。由于它是随机算法、输出依赖节点访问顺序，我们在两个随机种子下各运行一次，并报告两个划分之间的标准化互信息作为稳定性度量，另附分辨率扫描。标签传播作为廉价替代实现——每轮一次遍历、没有全局目标——两者之间的模块度差距被当作"质量换速度"的权衡来报告，而不是想当然。
+**社区发现。** 以 Louvain 模块度优化 [2, 7] 作为主划分。由于它是随机算法、输出依赖节点访问顺序，我们在两个随机种子下各运行一次，并报告两个划分之间的标准化互信息作为稳定性度量，另附分辨率扫描 [9]，因为模块度存在已知的分辨率上限。标签传播 [3] 作为廉价替代实现——每轮一次遍历、没有全局目标——两者之间的模块度差距被当作"质量换速度"的权衡来报告，而不是想当然。
 
 **时间画像。** 我们不按年代重新划分图，那会使各切片的划分不可比。相反，标签在全图上固定，然后对每个板块报告其成员署名的年代分布，从而在不引入划分不稳定性的前提下，呈现板块的兴起、主导与衰退。
 
@@ -322,7 +322,7 @@ PageRank 扩展性很差，而原因是结构性的，不是实现的缺陷：�
 
 有三项主张得到支撑。在实质上，香港发行网络可分解为若干电影板块，无监督算法仅凭共现关系就能把它们复原出来，模块度 0.75、跨种子稳定性 0.89，且本地的粤语板块可以通过工业自身历史所点名的核心人物被识别出来。在方法上，三种并行策略作用于同一台机器上的三种负载形态，产生三个不同的上限——6.93×、1.67×、4.34×——而这些差异在测量之前就可以用依赖结构和内存层次解释。在实践上，一个带进程级并行与缓存感知分块的工作站级实现，已经捕获了扫描层与计数层大部分可得的收益，而对于这个规模的图，不应把它用在迭代层上。
 
-未来工作，按我们尝试的优先顺序：用 FP-Growth 替换 Apriori 的候选生成并重测 E4，这应会把上限从不规整阶段移到计数阶段；从拥有该字段的来源获取出品国标签——Wikidata 在测试环境中不可达，但一份批量转储就能消除最大的有效性威胁；把时间分析从固定标签的画像推进到真正动态的社区方法；以及在接入票房数据后，检验板块位置能否预测商业结果。
+未来工作，按我们尝试的优先顺序：用 FP-Growth [6] 替换 Apriori 的候选生成并重测 E4，这应会把上限从不规整阶段移到计数阶段；从拥有该字段的来源获取出品国标签——Wikidata 在测试环境中不可达，但一份批量转储就能消除最大的有效性威胁；把时间分析从固定标签的画像推进到真正动态的社区方法；以及在接入票房数据后，检验板块位置能否预测商业结果。
 
 ---
 
@@ -340,15 +340,14 @@ PageRank 扩展性很差，而原因是结构性的，不是实现的缺陷：�
 ## 8. 参考文献
 
 1. Page, L., Brin, S., Motwani, R., Winograd, T. (1999). The PageRank citation ranking: bringing order to the web. *Stanford InfoLab Technical Report*.
-2. Blondel, V. D., Guillaume, J.-L., Lambiotte, R., Lefebvre, E. (2008). Fast unfolding of communities in large networks. *Journal of Statistical Mechanics*, P10008.
-3. Zhu, X., Ghahramani, Z. (2002). Learning from labeled and unlabeled data with label propagation. *CMU Technical Report*.
-4. Brandes, U. (2001). A faster algorithm for betweenness centrality. *Journal of Mathematical Sociology*, 25(2), 163–177.
-5. Agrawal, R., Srikant, R. (1994). Fast algorithms for mining association rules. *Proc. VLDB*, 487–499.
-6. Han, J., Pei, J., Yin, Y. (2000). Mining frequent patterns without candidate generation. *Proc. SIGMOD*, 1–12.
-7. Newman, M. E. J. (2006). Modularity and community structure in networks. *PNAS*, 103(23), 8577–8582.
-8. Dean, J., Ghemawat, S. (2008). MapReduce: simplified data processing on large clusters. *CACM*, 51(1), 107–113.
-9. Fortunato, S., Barthélemy, M. (2007). Resolution limit in community detection. *PNAS*, 104(1), 36–41.
-10. Watts, D. J., Strogatz, S. H. (1998). Collective dynamics of small-world networks. *Nature*, 393, 440–442.
+2. Blondel, V. D., Guillaume, J.-L., Lambiotte, R., Lefebvre, E. (2008). Fast unfolding of communities in large networks. *Journal of Statistical Mechanics: Theory and Experiment*, 2008(10), P10008. https://doi.org/10.1088/1742-5468/2008/10/p10008
+3. Zhu, X., Ghahramani, Z. (2002). Learning from labeled and unlabeled data with label propagation. *Technical Report*, Carnegie Mellon University.
+4. Brandes, U. (2001). A faster algorithm for betweenness centrality. *Journal of Mathematical Sociology*, 25(2), 163–177. https://doi.org/10.1080/0022250X.2001.9990249
+5. Agrawal, R., Srikant, R. (1994). Fast algorithms for mining association rules in large databases. *Proceedings of the 20th International Conference on Very Large Data Bases (VLDB)*, 487–499.
+6. Han, J., Pei, J., Yin, Y. (2000). Mining frequent patterns without candidate generation. *ACM SIGMOD Record*, 29(2), 1–12. https://doi.org/10.1145/335191.335372
+7. Newman, M. E. J. (2006). Modularity and community structure in networks. *PNAS*, 103(23), 8577–8582. https://doi.org/10.1073/pnas.0601602103
+8. Dean, J., Ghemawat, S. (2008). MapReduce: simplified data processing on large clusters. *Communications of the ACM*, 51(1), 107–113. https://doi.org/10.1145/1327452.1327492
+9. Fortunato, S., Barthélemy, M. (2007). Resolution limit in community detection. *PNAS*, 104(1), 36–41. https://doi.org/10.1073/pnas.0605965104
 
 ---
 
