@@ -10,13 +10,6 @@ __pycache__/
 .venv/
 venv/
 
-# LaTeX build products
-report/latex/*.aux
-report/latex/*.log
-report/latex/*.out
-report/latex/*.toc
-report/latex/*.synctex.gz
-
 # Office lock files
 ~$*
 *.tmp

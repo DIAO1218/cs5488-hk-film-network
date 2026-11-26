@@ -56,7 +56,6 @@ report/
   Report.docx/.pdf        正式报告（17 页）
   Report_zh.docx/.pdf     中文对照版
   Report.md               报告源文件（上面两份都由它生成）
-  latex/                  LaTeX 工程，按章节拆分便于并行编辑
   SPEAKING.md             4 分钟讲稿与问答预案
 data/
   out/               派生图产物（已提交，约 19 MB），无需下载 1.78 GB 也能复现分析
@@ -106,7 +105,6 @@ python src/figures.py
 ```bash
 python src/build_report.py && python report/make_docx.py
 python src/build_report_zh.py && python report/make_docx.py report/Report_zh.md report/Report_zh.docx
-python report/md2tex.py      # 在 report/latex/ 生成 LaTeX 工程
 python src/make_slides.py
 ```
 
