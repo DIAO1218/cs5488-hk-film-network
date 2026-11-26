@@ -27,13 +27,13 @@ TEMPLATE = os.path.join(BASE, "_rpt_tpl.docx")
 SRC = os.path.join(BASE, "report", "Report.md")
 OUT = os.path.join(BASE, "report", "Report_template.docx")
 
-BODY_SIZE = Pt(11)
-FIG_WIDTH = Cm(16.2)
+BODY_SIZE = Pt(12)
+FIG_WIDTH = Cm(16.6)
 WIDTHS = {
-    2: [4.6, 13.2],
-    3: [4.2, 4.6, 9.0],
-    4: [2.8, 2.4, 5.4, 7.2],
-    5: [1.2, 3.4, 3.4, 4.6, 5.2],
+    2: [4.8, 13.4],
+    3: [4.4, 4.8, 9.0],
+    4: [2.9, 2.5, 5.5, 7.3],
+    5: [1.3, 3.5, 3.5, 4.7, 5.2],
 }
 # md section title -> template section title(s)
 RENAME = {
@@ -100,6 +100,24 @@ def paragraphs_of(lines):
     return paras
 
 
+
+def add_rule(doc):
+    """Thin horizontal rule: an empty paragraph with a bottom border, as in the template."""
+    p = doc.add_paragraph()
+    p.paragraph_format.space_before = Pt(6)
+    p.paragraph_format.space_after = Pt(6)
+    pPr = p._p.get_or_add_pPr()
+    pbdr = OxmlElement("w:pBdr")
+    bottom = OxmlElement("w:bottom")
+    bottom.set(qn("w:val"), "single")
+    bottom.set(qn("w:sz"), "6")
+    bottom.set(qn("w:space"), "0")
+    bottom.set(qn("w:color"), "auto")
+    pbdr.append(bottom)
+    pPr.append(pbdr)
+    return p
+
+
 def add_borders(table):
     """The template ships without a table style, so draw the grid explicitly."""
     tblPr = table._tbl.tblPr
@@ -125,7 +143,7 @@ class Writer:
         p.paragraph_format.space_before = Pt(11)
         p.paragraph_format.space_after = Pt(5)
         p.paragraph_format.keep_with_next = True
-        M.set_run_font(p.add_run(text), name="Cambria", size=Pt(16), bold=True,
+        M.set_run_font(p.add_run(text), name="Cambria", size=Pt(18),
                        color=RGBColor(0x1A, 0x1A, 0x1A))
 
     def h2(self, text):
@@ -133,13 +151,20 @@ class Writer:
         p.paragraph_format.space_before = Pt(9)
         p.paragraph_format.space_after = Pt(3)
         p.paragraph_format.keep_with_next = True
-        M.set_run_font(p.add_run(text), name="Cambria", size=Pt(12.5), bold=True,
+        M.set_run_font(p.add_run(text), name="Cambria", size=Pt(13), bold=True,
                        color=RGBColor(0x1A, 0x1A, 0x1A))
 
     def para(self, text):
         p = self.doc.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-        M.add_inline(p, text, size=BODY_SIZE)
+        # A paragraph that opens with a bold run-in head ("Centrality.") keeps the
+        # structure but loses the weight: italic instead, since body prose has no bold.
+        m = re.match(r"\*\*(.+?)\*\*(.*)", text)
+        if m and m.group(1).rstrip().endswith("."):
+            M.set_run_font(p.add_run(m.group(1)), size=BODY_SIZE, italic=True)
+            M.add_inline(p, m.group(2), size=BODY_SIZE)
+        else:
+            M.add_inline(p, text, size=BODY_SIZE)
 
     def bullets(self, items):
         for it in items:
@@ -293,8 +318,8 @@ def build() -> None:
         body.remove(el)
 
     sec = doc.sections[0]
-    sec.top_margin = sec.bottom_margin = Cm(1.6)
-    sec.left_margin = sec.right_margin = Cm(1.6)
+    sec.top_margin = sec.bottom_margin = Cm(1.27)
+    sec.left_margin = sec.right_margin = Cm(1.27)
 
     for hp in sec.header.paragraphs:
         for run in hp.runs:
@@ -334,14 +359,25 @@ def build() -> None:
     for label, value in (("Student IDs", ids), ("Student Names", names), ("Student Emails", mails)):
         p = doc.add_paragraph()
         p.paragraph_format.space_after = Pt(2)
-        p.paragraph_format.tab_stops.add_tab_stop(Cm(3.4))   # one stop, so the colons line up
-        M.set_run_font(p.add_run(f"{label}\t: "), size=Pt(10))
-        M.set_run_font(p.add_run(value), size=Pt(10))
+        p.paragraph_format.tab_stops.add_tab_stop(Cm(3.5))   # one stop, so the colons line up
+        M.set_run_font(p.add_run(f"{label}\t: "), size=BODY_SIZE)
+        if label == "Student Emails":
+            # four addresses do not fit on one line; break after the second and
+            # resume at the tab stop so the block stays aligned
+            head, tail = value.split(", ", 2)[:2], value.split(", ", 2)[2]
+            run = p.add_run(", ".join(head) + ",")
+            M.set_run_font(run, size=BODY_SIZE)
+            run.add_break()
+            M.set_run_font(p.add_run("\t" + tail), size=BODY_SIZE)
+        else:
+            M.set_run_font(p.add_run(value), size=BODY_SIZE)
+
+    add_rule(doc)
 
     p = doc.add_paragraph()
     p.paragraph_format.space_before = Pt(18)
     p.paragraph_format.space_after = Pt(2)
-    M.set_run_font(p.add_run("Title:"), size=Pt(10))
+    M.set_run_font(p.add_run("Title:"), size=BODY_SIZE, bold=True)
 
     p = doc.add_paragraph()
     p.paragraph_format.space_after = Pt(14)
@@ -350,7 +386,7 @@ def build() -> None:
 
     p = doc.add_paragraph()
     p.paragraph_format.space_after = Pt(3)
-    M.set_run_font(p.add_run("Abstract: (max 300 words)"), size=Pt(10))
+    M.set_run_font(p.add_run("Abstract: (max 300 words)"), size=BODY_SIZE, bold=True)
 
     sections = split_sections(lines)
     by_name = {t: b for t, b in sections}
@@ -358,6 +394,7 @@ def build() -> None:
     for para in paragraphs_of(abstract_lines):
         w.para(para)
 
+    add_rule(doc)
     doc.add_page_break()
 
     # ---- Introduction / Motivation / Objective / Data Sources out of section 2
