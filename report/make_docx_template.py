@@ -334,6 +334,7 @@ def build() -> None:
     for label, value in (("Student IDs", ids), ("Student Names", names), ("Student Emails", mails)):
         p = doc.add_paragraph()
         p.paragraph_format.space_after = Pt(2)
+        p.paragraph_format.tab_stops.add_tab_stop(Cm(3.4))   # one stop, so the colons line up
         M.set_run_font(p.add_run(f"{label}\t: "), size=Pt(10))
         M.set_run_font(p.add_run(value), size=Pt(10))
 

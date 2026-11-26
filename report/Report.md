@@ -17,7 +17,24 @@ November 2026
 
 ## 1. Abstract
 
-Hong Kong is one of the most densely connected film industries in the world: a small pool of performers and technicians reused across thousands of productions. This report reconstructs the collaboration network of every film released in Hong Kong — 21,033 titles and 360,502 credited roles drawn from 51,878 people in the IMDb public dataset, found by scanning 170 million rows across five source files — and analyses it with three different parallel strategies. The engineering contribution is a three-tier design matched to three workload shapes: byte-range chunk map-reduce for the ingestion and join pass, blocked sparse matrix–vector multiplication with one barrier per iteration for PageRank, and sharded lock-free counting for association rule mining. Measured on a 14-core laptop processor with 20 hardware threads, the scan tier reaches 6.93× speedup at 16 workers, rule counting saturates near 4.34×, and PageRank reaches only 1.67×, because at this graph size an iteration costs about a millisecond and the kernel is bound by memory bandwidth rather than arithmetic — three outcomes that the dependency structure of each workload predicts in advance. Substantively, Louvain modularity optimisation recovers the cinema blocs of the Hong Kong release market without supervision: nine communities covering 68% of all people, with a Hollywood bloc, a Cantonese-language bloc, a mainland bloc, a Shaw-era bloc, and distinct European and Japanese blocs, at modularity 0.75 and cross-seed stability NMI 0.89. Within the Cantonese bloc, PageRank identifies the historically documented core of the local industry rather than its most prolific members, and the decade profile of each bloc traces the local industry's contraction after the 1990s. Association rule mining over genre and crew baskets returns 652 rules above confidence 0.6 and lift 1.2, dominated by animation–adventure coupling and by the co-occurrence of casting and production design with adventure genres.
+Hong Kong cinema ran on a small pool of people. A few hundred performers and technicians were reused
+across thousands of films, and the same names turn up across studios and decades. This report rebuilds
+that collaboration network from the IMDb public dataset: 21,033 titles, 360,502 credited roles and
+51,878 people, found by scanning 170 million rows in five files. We then analyse it with three
+parallel strategies, each matched to a different shape of work. The scan uses byte-range chunk
+map-reduce. PageRank uses a blocked sparse matrix-vector product with one barrier per iteration. Rule
+mining uses sharded counting with no locks. On a 14-core laptop processor with 20 hardware threads, the scan reaches
+6.93× at 16 workers and rule counting 4.34×, but PageRank stops at
+1.67×. At this graph size an iteration costs about a millisecond, so the kernel is limited by
+memory bandwidth and not by synchronisation. The dependency structure of each workload predicts all
+three outcomes before any code is run. On the substantive side, Louvain modularity optimisation recovers
+the cinema blocs with no supervision at all. Nine communities cover 68% of all people: a
+Hollywood bloc, a Cantonese-language bloc, a mainland bloc, a Shaw-era bloc, and separate European and
+Japanese blocs, at modularity 0.75 and cross-seed stability 0.89. Inside
+the Cantonese bloc, PageRank picks out the documented core of the local industry rather than its
+busiest members, and each bloc's decade profile traces the local industry's contraction after the 1990s.
+Rule mining over genre and crew baskets returns 652 rules above confidence 0.6 and lift 1.2,
+led by animation with adventure and by casting and production design with adventure.
 
 **Keywords:** parallel graph analytics, PageRank, Louvain community detection, association rule mining, map-reduce, memory hierarchy, Hong Kong cinema
 
@@ -27,11 +44,27 @@ Hong Kong is one of the most densely connected film industries in the world: a s
 
 ### 2.1 Background and problem statement
 
-The Hong Kong film industry produced several thousand features between the 1950s and the present, and for most of that period it ran on an unusually small labour pool. Shaw Brothers and Golden Harvest each kept contracted stables of actors and technicians; the New Wave and later Milkyway Image worked with recurring ensembles. The consequence is a collaboration network that is dense, historically traceable, and small enough that individual careers are visible inside it — the opposite of the diffuse global co-appearance networks that most published work studies.
+The Hong Kong film industry produced several thousand features between the 1950s and the present, and
+for most of that period it ran on an unusually small labour pool. Shaw Brothers and Golden Harvest each
+kept contracted stables of actors and technicians; the New Wave and later Milkyway Image worked with
+recurring ensembles. The resulting collaboration network is dense and historically traceable, and it is
+small enough that individual careers stay visible inside it. That makes it a different object from the
+diffuse global co-appearance networks most published work studies.
 
-The analytical question that motivates this project is whether that structure is recoverable without supervision. If a community detection algorithm is given nothing but a list of who appeared in which film, does it return the blocs that film historians already describe? And does centrality computed on the collaboration graph identify the people the industry actually revolved around, rather than simply the people with the longest credit lists?
+The question we set out to answer is whether that structure is recoverable without supervision. Give a
+community detection algorithm nothing but a list of who appeared in which film. Does it return the blocs
+that film historians already describe? And when we compute centrality on the collaboration graph, do we
+get the people the industry actually revolved around, or just the people with the longest credit lists?
 
-A second, unplanned question emerged during data preparation and became one of the report's findings. IMDb's non-commercial release carries no country-of-origin field. A film is observable only through its regional release titles, and a Hong Kong release is not a Hong Kong production: every Hollywood title that opened in Hong Kong also holds a Hong Kong alias, frequently translated into Chinese. Section 4.1 reports what three candidate definitions of the working set actually select, and Section 5.3 treats the resulting contamination as a measured threat rather than an assumption. The consequence for the analysis is a change of object: the network studied here is the *Hong Kong release network*, and the local industry appears inside it as one bloc among several — a framing that turned out to be more informative than the original one, because it makes the separation of cinemas a testable result.
+A second question turned up during data preparation, and it ended up being one of our findings. IMDb's
+non-commercial release has no country-of-origin field. A film can only be seen through its regional
+release titles, and a Hong Kong release is not a Hong Kong production: every Hollywood title that opened
+in Hong Kong also holds a Hong Kong alias, usually translated into Chinese. Section 4.1 reports what
+three candidate definitions of the working set actually select. Section 5.3 treats the resulting
+contamination as something we measured, not something we assumed away. The upshot is that we changed the
+object of study. The network here is the *Hong Kong release network*, and the local industry appears
+inside it as one bloc among several. That framing proved more useful than the original one, because it
+turns the separation of cinemas into a testable result.
 
 ### 2.2 Objective
 
@@ -88,7 +121,7 @@ Decompression deserves a note because it is where a naive design loses the argum
 
 ### 3.2 Parallel strategy
 
-The three tiers are deliberately different, because the three workloads stress different parts of the memory hierarchy and have different dependency structures.
+The three tiers differ because the three workloads stress different parts of the memory hierarchy and have different dependency structures.
 
 **Tier 1 — byte-range chunk map-reduce (S1, S2).** Each worker takes a contiguous byte range of the uncompressed file, aligned to a newline boundary so no record is split, parses it independently, applies the region filter against a shared read-only set of title identifiers, and returns its filtered rows. The parent merges the partial results [8]. Process-based workers rather than threads were chosen for a specific reason: the stage is parse-bound, and Python's global interpreter lock prevents threads from overlapping parse work, so a thread pool would have produced a flat speedup curve on any number of cores.
 
@@ -108,7 +141,7 @@ Chunk size is a tuned parameter, not a constant. Small chunks improve load balan
 
 **Association rules.** Each film is a basket containing one item per genre plus one item per crew category present in its credits. Itemsets are represented as integer bitsets so that a subset test is a single bitwise AND. Frequent itemsets are mined level-wise to size 3 at minimum support 1%, and rules are retained at confidence ≥ 0.6 and lift > 1.2.
 
-**Career clustering.** People with at least three credits are described by five features — credit count, number of active decades, peak-decade share, decade breadth, and recency — clustered with k-means, with k selected by silhouette score, and projected to two principal components for display.
+**Career clustering.** People with at least three credits are described by five features (credit count, number of active decades, peak-decade share, decade breadth, and recency), clustered with k-means, with k selected by silhouette score, and projected to two principal components for display.
 
 ### 3.4 Evaluation protocol
 
@@ -128,7 +161,7 @@ The first result is negative and it changed the project. Three definitions of "H
 | `region = HK` **and** a Cantonese/Mandarin alias | 15,715 | Inverted: foreign releases receive localised Chinese titles, so this selects *imports*, not local production |
 | `region = HK` **and** a Chinese original title | 0 | IMDb romanises original titles ("Mou gaan dou"), so no title field carries Chinese characters |
 
-There is no country or production-company field in this release at all, and the auxiliary route — joining Wikidata's country-of-origin statements on IMDb identifiers — was unavailable from the test environment. Rather than hand-curate a title list and call it ground truth, we keep the first definition, state it plainly, and let the analysis answer the question the data can support: *what structure does the Hong Kong release network have?*
+There is no country or production-company field in this release at all, and the auxiliary route, joining Wikidata's country-of-origin statements on IMDb identifiers, was unavailable from the test environment. Rather than hand-curate a title list and call it ground truth, we keep the first definition, state it plainly, and let the analysis answer the question the data can support: *what structure does the Hong Kong release network have?*
 
 The working set is therefore 21,033 titles of type movie, TV movie or short, with 360,502 credited roles covering 127,218 people. Of those, 19,022 carry at least one acting credit and 18,551 carry at least two, which is what an edge requires; mean billed cast is 7.2 people per title. Truncating each title to its eight top-billed acting credits yields a graph of **51,878 nodes and 388,168 edges** at density 2.88e-04.
 
@@ -151,11 +184,11 @@ The degree distribution is heavy-tailed with exponent γ ≈ 2.05, consistent wi
 *Figure 5. PageRank against degree, log–log. Rank and degree agree only in the tail (Spearman ρ = 0.49); the labelled outliers are people whose collaborations concentrate on high-rank neighbours.*
 
 
-PageRank against degree has Spearman ρ = 0.49 — correlated, but far from identical. The disagreement is the interesting part: performers who accumulate a large degree by appearing in many low-profile productions rank well below performers with fewer, more central collaborators. That is precisely the distinction the objective asked for, and it is not available from degree alone.
+PageRank against degree has Spearman ρ = 0.49. The two are correlated but far from identical. The disagreement is the interesting part: performers who accumulate a large degree by appearing in many low-profile productions rank well below performers with fewer, more central collaborators. That is precisely the distinction the objective asked for, and it is not available from degree alone.
 
 ### 4.3 Community structure: the blocs
 
-Louvain finds **1,285 communities at modularity Q = 0.75**, with cross-seed stability NMI 0.89 — the partition is reproducible, not an artefact of visiting order. The nine largest communities are listed below and drawn as a block model in Figure 6.
+Louvain finds **1,285 communities at modularity Q = 0.75**, with cross-seed stability NMI 0.89. The partition is reproducible, so it is not an artefact of visiting order. The nine largest communities are listed below and drawn as a block model in Figure 6.
 
 | Community | Members | Share | Leading members by PageRank |
 |---|---|---|---|
@@ -174,7 +207,7 @@ Louvain finds **1,285 communities at modularity Q = 0.75**, with cross-seed stab
 *Figure 6. Community block model. Node area is proportional to membership; edge width is the volume of collaborations between blocs. The nine blocs shown cover 68% of all people in the graph.*
 
 
-The partition is not a curiosity: it separates cinemas. The largest bloc (8,379 people) is the Cantonese-language core of the local industry — Simon Yam, Anthony Wong, Eric Tsang, Francis Ng, Andy Lau. The second (8,108) is dominated by American screen actors, the third (4,916) by Shaw-era and 1970s martial-arts performers such as Ku Feng, Lo Lieh and Chiang Kuang-Chao, and the next two by European and Japanese cinema respectively. No country label was supplied to the algorithm; the blocs emerge from co-appearance alone. That is a substantive result about the data as much as about Hong Kong: national cinemas are separable in collaboration structure even when their films share a release market.
+The partition is not a curiosity: it separates cinemas. The largest bloc (8,379 people) is the Cantonese-language core of the local industry: Simon Yam, Anthony Wong, Eric Tsang, Francis Ng, Andy Lau. The second (8,108) is dominated by American screen actors, the third (4,916) by Shaw-era and 1970s martial-arts performers such as Ku Feng, Lo Lieh and Chiang Kuang-Chao, and the next two by European and Japanese cinema respectively. No country label was supplied to the algorithm; the blocs emerge from co-appearance alone. That is a substantive result about the data as much as about Hong Kong: national cinemas are separable in collaboration structure even when their films share a release market.
 
 Within the local bloc, the top-ranked people are exactly those the industry's own histories put at its centre, while several performers with higher degree do not appear — PageRank is rewarding repeated collaboration with hubs rather than raw credit volume. This is the clearest confirmation that the centrality measure is doing analytical work.
 
@@ -191,7 +224,7 @@ The resolution sweep shows the expected trade-off: at resolution 0.25 the partit
 
 ### 4.4 Association rules
 
-Mining the 21,180 baskets at minimum support 1% returns **652 rules** above confidence 0.6 and lift 1.2. The strongest are structural rather than surprising — animation co-occurs with adventure, casting and production design co-occur with adventure — which is what a genre taxonomy should produce, and it validates the pipeline before anything is claimed from it.
+Mining the 21,180 baskets at minimum support 1% returns **652 rules** above confidence 0.6 and lift 1.2. The strongest are structural rather than surprising: animation co-occurs with adventure, casting and production design co-occur with adventure — which is what a genre taxonomy should produce, and it validates the pipeline before anything is claimed from it.
 
 | Antecedent | Consequent | Support | Confidence | Lift |
 |---|---|---|---|---|
@@ -209,7 +242,7 @@ Mining the 21,180 baskets at minimum support 1% returns **652 rules** above conf
 *Figure 8. Support against lift for all 652 rules, shaded by confidence. The high-lift, low-support corner holds long crew-role chains confined to a few productions; the dense low-lift cluster is genre co-occurrence, which is expected and uninformative.*
 
 
-The useful signal is in the middle of the distribution: crew-role pairs that survive at support above 2% — director with writer, cinematographer with composer — indicate a production pattern in which technical roles travel together, which is the studio-era assembly-line signature and is measurably weaker after 2000. That comparison is left to future work because the basket definition would need a per-decade split to support it.
+The useful signal is in the middle of the distribution: crew-role pairs that survive at support above 2% (director with writer, cinematographer with composer) indicate a production pattern in which technical roles travel together, which is the studio-era assembly-line signature and is measurably weaker after 2000. That comparison is left to future work because the basket definition would need a per-decade split to support it.
 
 ### 4.5 Career types
 
@@ -300,7 +333,13 @@ The answer is both, and the two effects separate cleanly. At the smallest graph 
 
 ### 5.1 What the three tiers say together
 
-The four experiments are deliberately different in shape, and the comparison is the report's main technical claim: "parallelise it" is not one decision but three, and which one applies is determined by the workload's dependency structure, not by the hardware. A scan has no dependencies and scales until the serial merge bites. An iterative solver has one dependency per iteration and stops scaling when the iteration becomes shorter than the barrier. An irregular mining phase has data-dependent cost and stops scaling when the slowest shard determines the finish, which no amount of workers fixes. The same machine produced 6.93×, 1.67× and 4.34× on three workloads of comparable size.
+The four experiments differ in shape on purpose, and comparing them is the report's main technical
+claim. "Parallelise it" is not one decision. It is three, and which one applies depends on the
+workload's dependency structure rather than on the machine. A scan has no dependencies, so it scales
+until the serial merge takes over. An iterative solver has one dependency per iteration, and it stops
+scaling once the iteration is shorter than the barrier. An irregular mining phase has data-dependent
+cost, so it stops when the slowest shard decides the finish, and more workers do not help. One machine
+produced 6.93×, 1.67× and 4.34× on three workloads of comparable size.
 
 ### 5.2 An implementation defect worth reporting
 
@@ -308,7 +347,11 @@ The first version of the scan tier created a fresh process pool for each of the 
 
 ### 5.3 Bottlenecks
 
-Three bottlenecks were predicted in the proposal and all three were confirmed. The serial gunzip (33.8 s) caps the end-to-end benefit of every later stage; the parent-side merge caps the scan tier; and the inter-iteration barrier caps PageRank. A fourth was not predicted: process-based parallelism multiplies memory, which is the binding constraint on the hardware this project targets. A fifth is a property of the machine rather than of the algorithm: the 16-worker configuration exceeds the 14 physical cores, and eight of those cores are efficiency cores with roughly half the throughput of the performance cores. Work split evenly by count is therefore not split evenly by time, and the slowest worker sets the finish. The 43% efficiency at 16 workers consequently mixes two effects — the serial merge and heterogeneous core placement — and this experiment does not attempt to separate them.
+Three bottlenecks were predicted in the proposal and all three were confirmed. The serial gunzip (33.8 s) caps the end-to-end benefit of every later stage; the parent-side merge caps the scan tier; and the inter-iteration barrier caps PageRank. A fourth was not predicted: process-based parallelism multiplies memory, which is the binding constraint on the hardware this project targets. One bottleneck belongs to the machine rather than to the algorithm. Sixteen workers exceed the 14
+physical cores, and eight of those cores are efficiency cores running at roughly half the throughput of
+the performance cores. Work split evenly by count is not split evenly by time, and the slowest worker
+decides when the run ends. The 43% efficiency at 16 workers therefore mixes two effects: the serial
+merge, and the placement of work on cores that are not equal. We do not try to separate them here.
 
 ### 5.4 Threats to validity
 
@@ -324,11 +367,21 @@ Three bottlenecks were predicted in the proposal and all three were confirmed. T
 
 ## 6. Conclusion and Future Work
 
-Three claims are supported. Substantively, the Hong Kong release network decomposes into cinema blocs that an unsupervised algorithm recovers from co-appearance alone, at modularity 0.75 and with cross-seed stability 0.89, and the local Cantonese-language bloc is identifiable by the people the industry's own histories name as its core. Methodologically, three parallel strategies applied to three workload shapes on one machine produce three different ceilings — 6.93×, 1.67×, 4.34× — and the differences are explained by dependency structure and memory hierarchy before they are measured. Practically, a workstation-scale implementation with process-level parallelism and cache-aware blocking captures most of the available gain for the scan and counting tiers, and should not be applied to the iterative tier at this graph size.
+Three claims hold up. The Hong Kong release network decomposes into cinema blocs that an unsupervised
+algorithm recovers from co-appearance alone: modularity 0.75, cross-seed stability 0.89, and a local
+Cantonese-language bloc that is recognisable by the people the industry's own histories name as its
+core. Applied to three workload shapes on one machine, three parallel strategies produce three
+different ceilings (6.93×, 1.67×, 4.34×), and the differences follow from dependency structure and
+memory hierarchy before anything is measured. Practically, a workstation-scale implementation with
+process-level parallelism and cache-aware blocking captures most of the gain for the scan and counting
+tiers. It should not be applied to the iterative tier at this graph size.
 
-Future work, in the order we would attempt it: replace Apriori's candidate generation with FP-Growth [6] and re-measure E4, which should move the ceiling from the irregular phase to the counting phase; obtain a country-of-origin label from a source that has one — Wikidata was unreachable from the test environment, but a bulk dump would remove the largest threat to validity; extend the temporal analysis from fixed-label profiles to a genuinely dynamic community method; and test whether bloc position predicts commercial outcomes once box-office data is joined.
-
----
+Future work, in the order we would attempt it. Replace Apriori's candidate generation with FP-Growth
+[6] and re-measure E4, which should move the ceiling from the irregular phase to the counting phase.
+Get a country-of-origin label from a source that has one; Wikidata was unreachable from the test
+environment, but a bulk dump would remove the largest threat to validity. Extend the temporal analysis
+from fixed-label profiles to a genuinely dynamic community method. And test whether bloc position
+predicts commercial outcomes once box-office data is joined.
 
 ## 7. Individual Contribution Statement
 
