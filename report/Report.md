@@ -10,8 +10,8 @@ November 2026
 |---|---|---|
 | 60371620 | Liuxianjia DIAO | ldiao7-c@my.cityu.edu.hk |
 | 61080389 | Lingxiao Zhou | lingxzhou3-c@my.cityu.edu.hk |
-| 60018560 | YANG Ziyao | ziyaoyang5-c@my.cityu.edu.hk |
-| 60263031 | LI Jin | k1160967796@163.com |
+| 60018560 | Ziyao YANG | ziyaoyang5-c@my.cityu.edu.hk |
+| 60263031 | Jin LI | k1160967796@163.com |
 
 ---
 
@@ -389,8 +389,8 @@ predicts commercial outcomes once box-office data is joined.
 |---|---|---|
 | Liuxianjia DIAO | Data acquisition and validation; S1 pipeline; E1 and E1b experiments; scaling harness | 25% |
 | Lingxiao Zhou | S2 graph construction; PageRank and Louvain implementations; E3 experiment | 25% |
-| YANG Ziyao | S4 rule mining; career clustering; figures 3–9 and 14 | 25% |
-| LI Jin | Report writing; figure standardisation; slide deck; Q&A preparation | 25% |
+| Ziyao YANG | S4 rule mining; career clustering; figures 3–9 and 14 | 25% |
+| Jin LI | Report writing; figure standardisation; slide deck; Q&A preparation | 25% |
 
 ---
 
