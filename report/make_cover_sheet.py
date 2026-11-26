@@ -10,6 +10,7 @@ import os
 import shutil
 
 from docx import Document
+from docx.shared import Cm
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TPL = os.path.join(BASE, "_cover_tpl.docx")
@@ -59,9 +60,25 @@ def main():
     d = Document(OUT)
     P = d.paragraphs
 
-    set_text(P[3], "Student IDs\t\t: " + ", ".join(m[0] for m in MEMBERS))
-    set_text(P[4], "Student Names\t: " + ", ".join(m[1] for m in MEMBERS))
-    set_text(P[5], "Student Emails\t: " + ", ".join(m[2] for m in MEMBERS))
+    # All three lines share one geometry: colon at 3.5 cm, values at 3.9 cm, and a
+    # hanging indent so wrapped or repeated values stay in the value column.
+    # chr(9)/chr(10) because python-docx turns them into a tab and a line break.
+    rows = [
+        (3, "Student IDs", ", ".join(m[0] for m in MEMBERS)),
+        (4, "Student Names", ", ".join(m[1] for m in MEMBERS)),
+        (5, "Student Emails", chr(10).join(m[2] for m in MEMBERS)),   # one address per line
+    ]
+    for idx, label, value in rows:
+        par = P[idx]
+        for r in list(par.runs):
+            r._element.getparent().remove(r._element)
+        pf = par.paragraph_format
+        pf.left_indent = Cm(3.9)
+        pf.first_line_indent = Cm(-3.9)
+        pf.tab_stops.add_tab_stop(Cm(3.5))    # colon column
+        pf.tab_stops.add_tab_stop(Cm(3.9))    # value column, same as the hanging indent
+        par.add_run(label + chr(9) + ":" + chr(9) + value)
+
     set_text(P[9], TITLE)
     for idx, text in zip(range(12, 17), HIGHLIGHTS):
         set_text(P[idx], text)
