@@ -39,7 +39,7 @@ latex/
 **1. Overleaf（推荐，零安装）**
 
 1. 打开 [overleaf.com](https://www.overleaf.com) → New Project → Upload Project
-2. 上传本目录的 `Report_LaTeX.zip`
+2. 把整个 `latex` 目录拖进去（Overleaf 支持拖入文件夹；也可先压缩成 zip 再上传）
 3. 编译器保持默认 **pdfLaTeX**，直接 Recompile
 
 多人实时协作、历史版本回溯都在 Overleaf 里，不需要 Git。
