@@ -148,10 +148,12 @@ class Writer:
 
     def h2(self, text):
         p = self.doc.add_paragraph()
-        p.paragraph_format.space_before = Pt(9)
-        p.paragraph_format.space_after = Pt(3)
+        p.paragraph_format.space_before = Pt(11)
+        p.paragraph_format.space_after = Pt(4)
         p.paragraph_format.keep_with_next = True
-        M.set_run_font(p.add_run(text), name="Cambria", size=Pt(13), bold=True,
+        # same family and weight as the section heading, one step down in size,
+        # so the hierarchy comes from scale rather than from bold
+        M.set_run_font(p.add_run(text), name="Cambria", size=Pt(14),
                        color=RGBColor(0x1A, 0x1A, 0x1A))
 
     def para(self, text):
