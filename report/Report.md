@@ -1,6 +1,6 @@
 # Cinema Blocs and Local Talent Structure
 
-## Parallel Graph Analytics of the Hong Kong Release Network from 180 Million IMDb Records
+## Parallel Graph Analytics of the Hong Kong Release Network from 169.6 Million IMDb Rows
 
 **CS5488 Big Data Algorithms and Tech — Group Project Final Report**
 
@@ -8,10 +8,10 @@ November 2026
 
 | Student ID | Student Name | Student Email |
 |---|---|---|
-| [Student ID 1] | [Student Name 1] | [Email 1] |
-| [Student ID 2] | [Student Name 2] | [Email 2] |
-| [Student ID 3] | [Student Name 3] | [Email 3] |
-| [Student ID 4] | [Student Name 4] | [Email 4] |
+| 60371620 | Liuxianjia DIAO | ldiao7-c@my.cityu.edu.hk |
+| 61080389 | Lingxiao Zhou | lingxzhou3-c@my.cityu.edu.hk |
+| 60018560 | YANG Ziyao | ziyaoyang5-c@my.cityu.edu.hk |
+| 60263031 | LI Jin | k1160967796@163.com |
 
 ---
 
@@ -334,10 +334,10 @@ Future work, in the order we would attempt it: replace Apriori's candidate gener
 
 | Member | Contribution | Share |
 |---|---|---|
-| [Student Name 1] | Data acquisition and validation; S1 pipeline; E1 and E1b experiments; scaling harness | 27% |
-| [Student Name 2] | S2 graph construction; PageRank and Louvain implementations; E3 experiment | 27% |
-| [Student Name 3] | S4 rule mining; career clustering; figures 3–9 and 14 | 26% |
-| [Student Name 4] | Report writing; figure standardisation; slide deck; Q&A preparation | 20% |
+| Liuxianjia DIAO | Data acquisition and validation; S1 pipeline; E1 and E1b experiments; scaling harness | 27% |
+| Lingxiao Zhou | S2 graph construction; PageRank and Louvain implementations; E3 experiment | 27% |
+| YANG Ziyao | S4 rule mining; career clustering; figures 3–9 and 14 | 26% |
+| LI Jin | Report writing; figure standardisation; slide deck; Q&A preparation | 20% |
 
 ---
 

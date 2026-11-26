@@ -108,9 +108,13 @@ def main() -> None:
         f"图中九个板块覆盖全图 {top9:.0f}% 的人。"
     )
 
+    MEMBERS = [('60371620', 'Liuxianjia DIAO', 'ldiao7-c@my.cityu.edu.hk'), ('61080389', 'Lingxiao Zhou', 'lingxzhou3-c@my.cityu.edu.hk'), ('60018560', 'YANG Ziyao', 'ziyaoyang5-c@my.cityu.edu.hk'), ('60263031', 'LI Jin', 'k1160967796@163.com')]
+    ROLES = ['数据获取与校验；S1 管线；E1 与 E1b 实验；扩展性测量框架', 'S2 建图；PageRank 与 Louvain 实现；E3 实验', 'S4 规则挖掘；职业聚类；图 3–9 与图 14', '报告撰写；图表规范统一；演示文稿；问答准备']
+    SHARES = ['27%', '27%', '26%', '20%']
+
     md = f"""# 电影板块与本地人才结构
 
-## 基于 1.8 亿条 IMDb 记录的香港发行网络并行图分析
+## 基于 1.696 亿条 IMDb 记录的香港发行网络并行图分析
 
 **CS5488 Big Data Algorithms and Tech — 小组项目最终报告（中文对照版）**
 
@@ -372,10 +376,7 @@ PageRank 扩展性很差，而原因是结构性的，不是实现的缺陷：�
 
 | 成员 | 贡献 | 占比 |
 |---|---|---|
-| [学生姓名 1] | 数据获取与校验；S1 管线；E1 与 E1b 实验；扩展性测量框架 | 27% |
-| [学生姓名 2] | S2 建图；PageRank 与 Louvain 实现；E3 实验 | 27% |
-| [学生姓名 3] | S4 规则挖掘；职业聚类；图 3–9 与图 14 | 26% |
-| [学生姓名 4] | 报告撰写；图表规范统一；演示文稿；问答准备 | 20% |
+{chr(10).join('| ' + MEMBERS[i][1] + ' | ' + ROLES[i] + ' | ' + SHARES[i] + ' |' for i in range(4))}
 
 ---
 
